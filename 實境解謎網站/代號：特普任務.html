@@ -585,13 +585,19 @@
 
             <!-- 2. 所有隊伍闖關進度與排名監控表 -->
             <div class="bg-gray-950 p-6 rounded-xl border border-yellow-500/30 space-y-4">
-                <div class="flex justify-between items-center border-b border-gray-800 pb-3">
+                <div class="flex flex-wrap justify-between items-center border-b border-gray-800 pb-3 gap-2">
                     <h3 class="font-bold text-yellow-500 text-sm flex items-center gap-1.5">
                         <i data-lucide="monitor" class="w-4 h-4"></i> 全隊伍即時解謎狀態與排名監控
                     </h3>
-                    <span class="text-[10px] bg-green-950/80 text-green-400 border border-green-800 px-2 py-0.5 rounded-full flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-ping"></span> 實時更新中
-                    </span>
+                    <div class="flex items-center gap-3">
+                        <button onclick="staffSyncCloudRankings()" id="btn-cloud-sync" class="bg-cyan-600 hover:bg-cyan-500 text-black font-extrabold text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all shadow-md active:scale-95">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                            <span>🔄 更新最新進度與排名</span>
+                        </button>
+                        <span class="text-[10px] bg-green-950/80 text-green-400 border border-green-800 px-2 py-0.5 rounded-full flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-ping"></span> 實時更新中
+                        </span>
+                    </div>
                 </div>
                 
                 <div class="overflow-x-auto">
@@ -1247,7 +1253,7 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-2 max-w-xs mx-auto pt-2">
-                        <input type="text" id="fog-input-1" placeholder="請輸入 3 位數字" class="bg-gray-900 border border-purple-800 rounded px-3 py-2 text-center text-sm w-full font-mono text-purple-400 focus:outline-none focus:ring-1 focus:ring-purple-500">
+                        <input type="text" id="fog-input-1" placeholder="請將真消息對應的數字由小到大排列" class="bg-gray-900 border border-purple-800 rounded px-3 py-2 text-center text-sm w-full font-mono text-purple-400 focus:outline-none focus:ring-1 focus:ring-purple-500">
                         <button onclick="submitFogStage(1)" class="bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs px-4 py-2.5 rounded whitespace-nowrap shadow-md">送出解鎖</button>
                     </div>
                 </div>
@@ -2220,7 +2226,18 @@
                 
                 if (screenId === 'screen-staff-dashboard') {
                     updateStaffDashboard();
-                    staffDashboardInterval = setInterval(updateStaffDashboard, 1500);
+                    syncProgressFromCloud().then(() => updateStaffDashboard()); // 點開後台時自動背景同步一次
+                    syncExplorationModeFromCloud();
+                    
+                    let tickCount = 0;
+                    staffDashboardInterval = setInterval(() => {
+                        updateStaffDashboard();
+                        tickCount++;
+                        if (tickCount % 10 === 0) { // 每 15 秒自動從雲端同步一次所有小隊排行與模式
+                            syncProgressFromCloud().then(() => updateStaffDashboard());
+                            syncExplorationModeFromCloud();
+                        }
+                    }, 1500);
                 }
             }
         }
@@ -2434,6 +2451,12 @@
                 // 每 5 秒自動同步進度到 localStorage，以便工作人員實時更新
                 if (totalSeconds % 5 === 0) {
                     saveCurrentTeamProgress();
+                }
+                
+                // 每 15 秒同步一次雲端最新設定 (如探索模式) 與遠端工作人員覆寫
+                if (totalSeconds % 15 === 0) {
+                    syncExplorationModeFromCloud();
+                    syncPlayerProgressFromCloud();
                 }
                 
                 // 剩餘 10 分鐘時警告
@@ -3144,7 +3167,7 @@
                     
                     
                     <div class="bg-blue-50 border-l-4 border-blue-500 p-3 mt-4 text-xs md:text-sm text-slate-700">
-                        <b>📍 操作指南：</b> 閱讀平板上的任務，根據<span class="text-blue-700 font-bold">「國家防災日 6大準備原則與抗震3步驟」</span>進行數學與邏輯推演。作答正確後彈窗將會自動關閉，請在加密網格地圖上，<span class="text-cyan-600 font-bold">「直接滑鼠點選」</span>推算出來的最新格點座標，指引你們前往存放物資箱的地點！
+                        <b>📍 操作指南：</b> 閱讀平板上的任務，根據<span class="text-blue-700 font-bold">「國家防災日 6大準備原則與抗震3步驟」</span>進行數學與邏輯推演。作答正確後彈窗將會自動關閉，請在加密網格地圖上，<span class="text-cyan-600 font-bold">「直接點選」</span>推算出來的最新格點座標，指引你們前往存放物資箱的地點！
                     </div>
 
                     <div class="mt-6 pt-4 border-t border-slate-200">
@@ -3899,11 +3922,18 @@
                 showToast("此任務已通關，目前處於唯讀狀態！", "warning");
                 return;
             }
-            // 僅變暗表示已選擇，不播放音效，不彈窗通知對錯，且繼續保留在原位
-            element.style.opacity = "0.35";
-            element.style.filter = "grayscale(80%)";
-            element.style.pointerEvents = "none";
-            element.style.borderColor = "#4b5563"; // 深灰色邊框表示已選定/排除
+            playSound('click');
+            if (element.style.opacity === "0.35") {
+                // 再按一下變亮
+                element.style.opacity = "";
+                element.style.filter = "";
+                element.style.borderColor = "";
+            } else {
+                // 按一下變暗
+                element.style.opacity = "0.35";
+                element.style.filter = "grayscale(80%)";
+                element.style.borderColor = "#4b5563"; // 深灰色邊框表示已選定/排除
+            }
         }
 
         function submitFogStage(stage) {
@@ -4560,6 +4590,240 @@
             }
         }
 
+        // ---------------------------------------------------
+        // 4.1.3 新增：雲端資料庫雙向同步機制 (解決多裝置部署無法共享紀錄問題)
+        // ---------------------------------------------------
+        const CLOUD_DB_URL = "https://kvdb.io/trump_mission_secret_bucket_2026_aegis/all_teams";
+        const CLOUD_CONFIG_URL = "https://kvdb.io/trump_mission_secret_bucket_2026_aegis/exploration_mode";
+        let lastSyncedState = "";
+
+        async function syncProgressToCloud(force = false) {
+            try {
+                let localTeams = JSON.parse(localStorage.getItem('trump_mission_teams')) || [];
+                if (localTeams.length === 0) return;
+                
+                // 找出目前活躍小隊，確認是否需要同步 (防併發過載)
+                let myTeam = localTeams.find(t => t.name === teamName);
+                if (myTeam) {
+                    let stateStr = JSON.stringify({
+                        name: myTeam.name,
+                        questStatus: myTeam.questStatus,
+                        failureCount: myTeam.failureCount,
+                        gameCleared: myTeam.gameCleared,
+                        startTime: myTeam.startTime,
+                        endTime: myTeam.endTime
+                    });
+                    
+                    if (!force && stateStr === lastSyncedState) {
+                        return; // 狀態未實質改變，直接跳過網路請求以節省資源並防競態
+                    }
+                    lastSyncedState = stateStr;
+                }
+                
+                // 1. 先獲取雲端最新數據以防覆寫其他小隊
+                let response = await fetch(CLOUD_DB_URL);
+                let cloudTeams = [];
+                if (response.ok) {
+                    try {
+                        cloudTeams = await response.json() || [];
+                    } catch(e) { cloudTeams = []; }
+                }
+                
+                // 2. 將雲端與本機數據合併
+                let merged = [...cloudTeams];
+                localTeams.forEach(localTeam => {
+                    let existingIdx = merged.findIndex(t => t.name === localTeam.name);
+                    if (existingIdx > -1) {
+                        let existing = merged[existingIdx];
+                        
+                        // 誰的破關數多優先，若相同則以本機或後端更新者為主
+                        let localDone = Object.values(localTeam.questStatus || {}).filter(Boolean).length;
+                        let existingDone = Object.values(existing.questStatus || {}).filter(Boolean).length;
+                        
+                        if (localDone >= existingDone) {
+                            merged[existingIdx] = localTeam;
+                        }
+                    } else {
+                        merged.push(localTeam);
+                    }
+                });
+                
+                // 3. 上傳回雲端
+                await fetch(CLOUD_DB_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(merged)
+                });
+                
+                // 4. 同步更新本機
+                localStorage.setItem('trump_mission_teams', JSON.stringify(merged));
+            } catch (e) {
+                console.error("Cloud push failed:", e);
+            }
+        }
+
+        async function syncProgressFromCloud() {
+            try {
+                let response = await fetch(CLOUD_DB_URL);
+                if (response.ok) {
+                    let cloudTeams = [];
+                    try {
+                        cloudTeams = await response.json() || [];
+                    } catch(e) { cloudTeams = []; }
+                    
+                    let localTeams = JSON.parse(localStorage.getItem('trump_mission_teams')) || [];
+                    
+                    // 合併雲端與本機
+                    let merged = [...localTeams];
+                    cloudTeams.forEach(cloudTeam => {
+                        let existingIdx = merged.findIndex(t => t.name === cloudTeam.name);
+                        if (existingIdx > -1) {
+                            let existing = merged[existingIdx];
+                            let cloudDone = Object.values(cloudTeam.questStatus || {}).filter(Boolean).length;
+                            let existingDone = Object.values(existing.questStatus || {}).filter(Boolean).length;
+                            
+                            if (cloudDone >= existingDone) {
+                                merged[existingIdx] = cloudTeam;
+                            }
+                        } else {
+                            merged.push(cloudTeam);
+                        }
+                    });
+                    
+                    localStorage.setItem('trump_mission_teams', JSON.stringify(merged));
+                    return true;
+                }
+            } catch (e) {
+                console.error("Cloud pull failed:", e);
+            }
+            return false;
+        }
+
+        async function syncExplorationModeToCloud(mode) {
+            try {
+                await fetch(CLOUD_CONFIG_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ mode: mode })
+                });
+            } catch (e) {
+                console.error("Failed to sync exploration mode to cloud:", e);
+            }
+        }
+
+        async function syncExplorationModeFromCloud() {
+            try {
+                let response = await fetch(CLOUD_CONFIG_URL);
+                if (response.ok) {
+                    let data = await response.json();
+                    if (data && data.mode) {
+                        if (explorationMode !== data.mode) {
+                            explorationMode = data.mode;
+                            // 更新後台與前台模式 UI 的按鈕狀態
+                            const seqBtn = document.getElementById('btn-mode-seq');
+                            const freeBtn = document.getElementById('btn-mode-free');
+                            if (explorationMode === 'sequential') {
+                                if (seqBtn) seqBtn.className = "flex-1 bg-cyan-600 hover:bg-cyan-500 text-white font-extrabold text-[11px] py-2 rounded-lg transition-all shadow-md";
+                                if (freeBtn) freeBtn.className = "flex-1 bg-gray-800 hover:bg-gray-750 text-gray-400 font-bold text-[11px] py-2 rounded-lg border border-gray-700 transition-all";
+                            } else {
+                                if (seqBtn) seqBtn.className = "flex-1 bg-gray-800 hover:bg-gray-750 text-gray-400 font-bold text-[11px] py-2 rounded-lg border border-gray-700 transition-all";
+                                if (freeBtn) freeBtn.className = "flex-1 bg-cyan-600 hover:bg-cyan-500 text-white font-extrabold text-[11px] py-2 rounded-lg transition-all shadow-md";
+                            }
+                            updateMenuProgress();
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to fetch exploration mode from cloud:", e);
+            }
+        }
+
+        async function syncPlayerProgressFromCloud() {
+            if (!teamName) return;
+            try {
+                let response = await fetch(CLOUD_DB_URL);
+                if (response.ok) {
+                    let cloudTeams = [];
+                    try {
+                        cloudTeams = await response.json() || [];
+                    } catch(e) { cloudTeams = []; }
+                    
+                    let cloudTeam = cloudTeams.find(t => t.name === teamName);
+                    if (cloudTeam) {
+                        let localTeams = JSON.parse(localStorage.getItem('trump_mission_teams')) || [];
+                        let existingIdx = localTeams.findIndex(t => t.name === teamName);
+                        
+                        let questStatusChanged = false;
+                        for (let q = 1; q <= 5; q++) {
+                            if (cloudTeam.questStatus[q] !== questStatus[q]) {
+                                questStatus[q] = cloudTeam.questStatus[q];
+                                questStatusChanged = true;
+                            }
+                        }
+                        
+                        if (cloudTeam.failureCount !== failureCount) {
+                            failureCount = cloudTeam.failureCount;
+                            updateFailureDisplay();
+                        }
+                        
+                        if (cloudTeam.gameCleared !== gameCleared) {
+                            gameCleared = cloudTeam.gameCleared;
+                            if (gameCleared) {
+                                goToEnding(false);
+                            }
+                        }
+                        
+                        const initialSeconds = 100 * 60;
+                        const cloudRemaining = initialSeconds - cloudTeam.elapsedSeconds;
+                        if (Math.abs(totalSeconds - cloudRemaining) > 10) {
+                            totalSeconds = cloudRemaining;
+                            updateTimerDisplay();
+                        }
+                        
+                        if (existingIdx > -1) {
+                            localTeams[existingIdx] = cloudTeam;
+                        } else {
+                            localTeams.push(cloudTeam);
+                        }
+                        localStorage.setItem('trump_mission_teams', JSON.stringify(localTeams));
+                        
+                        if (questStatusChanged) {
+                            updateMenuProgress();
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error("Player sync from cloud failed:", e);
+            }
+        }
+
+        async function staffSyncCloudRankings() {
+            playSound('click');
+            const btn = document.getElementById('btn-cloud-sync');
+            let originalContent = "";
+            if (btn) {
+                btn.setAttribute('disabled', 'true');
+                originalContent = btn.innerHTML;
+                btn.innerHTML = `<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i><span>同步中...</span>`;
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+            
+            let success = await syncProgressFromCloud();
+            
+            if (success) {
+                playSound('success');
+                showToast("☁️ 雲端數據同步成功！已獲取所有小隊最新進度與排名。", "success");
+            } else {
+                playSound('fail');
+                showToast("❌ 雲端同步失敗，請檢查網路連線狀態！", "fail");
+            }
+            
+            if (btn) {
+                btn.removeAttribute('disabled');
+                btn.innerHTML = originalContent;
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+            updateStaffDashboard();
+        }
+
         function saveCurrentTeamProgress() {
             if (!teamName) return;
             let teams = [];
@@ -4627,6 +4891,9 @@
             }
             
             localStorage.setItem('trump_mission_teams', JSON.stringify(teams));
+            
+            // 背景同步到雲端 (排除無實質狀態改變的頻繁網路請求)
+            syncProgressToCloud();
         }
 
         function getSortedRankings() {
@@ -4773,7 +5040,16 @@
                 teams = teams.filter(t => t.name !== name);
                 localStorage.setItem('trump_mission_teams', JSON.stringify(teams));
                 updateStaffDashboard();
-                showToast('已刪除隊伍「' + name + '」的紀錄', "warning");
+                
+                // 上傳同步到雲端以完全刪除
+                fetch(CLOUD_DB_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(teams)
+                }).then(() => {
+                    showToast('已刪除隊伍「' + name + '」的紀錄並同步至雲端', "warning");
+                }).catch(e => {
+                    showToast('已刪除本機隊伍「' + name + '」，但雲端同步失敗！', "fail");
+                });
             }
         }
 
@@ -4900,12 +5176,16 @@
             updateStaffDashboard();
             saveCurrentTeamProgress();
             updateMenuProgress();
+            
+            // 同步探索模式到雲端
+            syncExplorationModeToCloud(mode);
         }
 
         window.onload = function() {
             if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
             }
+            syncExplorationModeFromCloud(); // 初始載入時同步雲端探索模式
             updateMenuProgress();
             
             // 監聽並自動調整任務二狀態列位置
