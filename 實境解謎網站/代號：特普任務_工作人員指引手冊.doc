@@ -1,0 +1,502 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>《代號：特普任務》工作人員指引手冊</title>
+<style>
+    body {
+        font-family: "Microsoft JhengHei", "微軟正黑體", "PMingLiU", "新細明體", sans-serif;
+        line-height: 1.6;
+        color: #333333;
+        margin: 30px;
+    }
+    .cover-title {
+        font-size: 28pt;
+        color: #1e3a8a;
+        text-align: center;
+        margin-top: 100px;
+        font-weight: bold;
+    }
+    .cover-sub {
+        font-size: 16pt;
+        color: #4b5563;
+        text-align: center;
+        margin-top: 20px;
+        margin-bottom: 150px;
+    }
+    .cover-meta {
+        font-size: 12pt;
+        color: #6b7280;
+        text-align: center;
+        line-height: 2;
+    }
+    .page-break {
+        page-break-before: always;
+    }
+    h1 {
+        font-size: 20pt;
+        color: #1e3a8a;
+        border-bottom: 2px solid #1e3a8a;
+        padding-bottom: 8px;
+        margin-top: 35px;
+        margin-bottom: 15px;
+    }
+    h2 {
+        font-size: 14pt;
+        color: #1e40af;
+        border-left: 5px solid #1e40af;
+        padding-left: 10px;
+        margin-top: 25px;
+        margin-bottom: 12px;
+    }
+    h3 {
+        font-size: 12pt;
+        color: #1d4ed8;
+        margin-top: 18px;
+        margin-bottom: 10px;
+    }
+    p, li {
+        font-size: 11pt;
+        margin-bottom: 8px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0;
+    }
+    th {
+        background-color: #f3f4f6;
+        color: #111827;
+        font-weight: bold;
+        border: 1px solid #d1d5db;
+        padding: 10px;
+        text-align: left;
+        font-size: 10.5pt;
+    }
+    td {
+        border: 1px solid #d1d5db;
+        padding: 10px;
+        font-size: 10.5pt;
+    }
+    .hint-container {
+        margin: 15px 0;
+        padding: 12px;
+        border-radius: 4px;
+        border: 1px solid #e5e7eb;
+    }
+    .hint-green {
+        background-color: #f0fdf4;
+        border-left: 6px solid #16a34a;
+    }
+    .hint-yellow {
+        background-color: #fefce8;
+        border-left: 6px solid #ca8a04;
+    }
+    .hint-red {
+        background-color: #fef2f2;
+        border-left: 6px solid #dc2626;
+    }
+    .badge {
+        font-weight: bold;
+        padding: 2px 6px;
+        border-radius: 3px;
+        color: #ffffff;
+        font-size: 9.5pt;
+        display: inline-block;
+    }
+    .badge-green { background-color: #16a34a; }
+    .badge-yellow { background-color: #ca8a04; }
+    .badge-red { background-color: #dc2626; }
+    
+    .strong-title {
+        font-weight: bold;
+        color: #111827;
+    }
+    .text-green { color: #16a34a; font-weight: bold; }
+    .text-yellow { color: #ca8a04; font-weight: bold; }
+    .text-red { color: #dc2626; font-weight: bold; }
+    .text-blue { color: #1d4ed8; font-weight: bold; }
+</style>
+</head>
+<body>
+
+    <!-- 封面頁 -->
+    <div style="text-align: center;">
+        <p class="cover-title">📡 實境解謎專案：《代號：特普任務》</p>
+        <p class="cover-sub">現場工作人員指引與漸進式提示手冊</p>
+        
+        <div style="margin-top: 180px;"></div>
+        
+        <p class="cover-meta">
+            <strong>適用對象：</strong> 現場引導員、小幫手、包紮評審、中控人員<br>
+            <strong>核心主旨：</strong> 防災探索 / 急救包紮實作 / 媒體識讀與防詐防霸凌<br>
+            <strong>製作單位：</strong> 神盾系統防線指導小組<br>
+            <strong>技術支持：</strong> Google DeepMind Team - Advanced Agentic Coding<br>
+            <strong>發布日期：</strong> 2026 年 5 月
+        </p>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- 目錄與前言 -->
+    <h1>📖 前言與中控平台概述</h1>
+    <p>歡迎擔任《代號：特普任務》實境解謎的現場引導人員與中控小幫手！本遊戲將引導小隊利用戰術平板（網格地圖、模擬背包、情報鑑識器）深入校園實地，進行防震、防救災物資配比、實境包紮急救、假新聞防詐識讀，並重啟校園地理防禦系統。</p>
+    
+    <h2>1. 後台主控平台登入與監控</h2>
+    <p>工作人員可在任何時間於平板首頁點選「工作人員登入」，並輸入安全密鑰 <strong><span class="text-blue">286</span></strong> 即可登入工作人員中控平台。</p>
+    <ul>
+        <li><strong>實時進度排名表</strong>：實時掌控各註冊小隊的任務進度（1 ~ 5 關）、首次破關的<b>第一通關成績</b>（鎖定首次破關記錄，二遊不覆蓋以保障排名公平性）、闖關次數、累計失敗次數與英雄稱號。</li>
+        <li><strong>快速測試工具</strong>：支持快速模擬玩家登入、重置、完成任意關卡等除錯功能，便於主控應對現場突發狀況。</li>
+        <li><strong>現場引導基本原則</strong>：請<strong>切勿直接告訴玩家最終答案</strong>。實境解謎的核心價值在於小隊的思考與實作。請優先使用手冊中的<b>「綠色輕度提示」</b>引導思考，若卡關超過 5-10 分鐘，方可升級至<b>「黃色中度提示」</b>，只有在比賽即將超時且隊伍極度沮喪時，才給予<b>「紅色強度提示」</b>直接協助。</li>
+    </ul>
+
+    <div class="page-break"></div>
+
+    <!-- 關卡一 -->
+    <h1>📍 任務一：迷失的座標 (防震知識與地圖定位)</h1>
+    <p>小隊需利用平板上的互動網格地圖，透過答題獲得位移格數與方向，點選三階段軌跡，最終回報第一個物資箱座標。</p>
+    
+    <h2>1. 標準答案與解謎邏輯</h2>
+    <table>
+        <tr>
+            <th style="width: 15%;">步驟</th>
+            <th style="width: 45%;">簡答題目</th>
+            <th style="width: 20%;">正確選項與數值</th>
+            <th style="width: 20%;">地圖移動動作</th>
+        </tr>
+        <tr>
+            <td class="strong-title">解謎一</td>
+            <td>強震來襲，請問抗震保命動作共幾個步驟？</td>
+            <td><span class="text-blue">B. 3 個</span><br>(趴下、掩護、穩住)</td>
+            <td>向東移動 3 步<br>(X 軸 -3 格)</td>
+        </tr>
+        <tr>
+            <td class="strong-title">解謎二</td>
+            <td>(防災食物準備天數) - (家具固定步驟編號) = ？</td>
+            <td><span class="text-blue">A. 2</span><br>(3天份 - 步驟編號 1)</td>
+            <td>向南移動 2 步<br>(Y 軸 +2 格)</td>
+        </tr>
+        <tr>
+            <td class="strong-title">解謎三</td>
+            <td>國家防災日是哪一天？（取日期倒數第二碼）</td>
+            <td><span class="text-blue">A. 9月21日</span><br>(921 倒數第二碼為 2)</td>
+            <td>向東移動 2 步<br>(X 軸 -2 格)</td>
+        </tr>
+    </table>
+    <ul>
+        <li><strong>最終物資箱座標</strong>：<strong><span class="text-green">(-5, 2)</span></strong>。</li>
+        <li><strong>對應校園實地地標</strong>：<strong>設計大樓 — 藝文中心</strong>。</li>
+        <li><strong>定位成功提示</strong>：<span class="text-green">"📡 小隊已定位至新座標點 (-5, 2)"</span>。</li>
+    </ul>
+
+    <h2>2. 💡 工作人員三階段提示卡</h2>
+    
+    <div class="hint-container hint-green">
+        <span class="badge badge-green">🟢 輕度提示 (淺 - 引導思考)</span>
+        <p style="margin-top: 5px;">「回想一下，每次地震避難演練時，廣播常喊的避難三口訣是什麼？數數看總共是幾個動作？」</p>
+        <p>「簡報下載按鈕不是裝飾喔！用手機點開下載 PDF，搜尋『食物』和『家具固定』，答案都在那兩頁！」</p>
+    </div>
+
+    <div class="hint-container hint-yellow">
+        <span class="badge badge-yellow">🟡 中度提示 (中 - 縮小範圍)</span>
+        <p style="margin-top: 5px;">「避難動作是趴下、掩護、穩住，所以解謎一的數字是 3。」</p>
+        <p>「防災食物最少要準備 3 天，家具固定準備的步驟是第 1 步。把這兩個數字相減（3 - 1）就是解謎二的答案！」</p>
+        <p>「國家防災日是 9 月 21 日，把這三個數字寫下來（921），它的『倒數第二個數字』是多少？」</p>
+    </div>
+
+    <div class="hint-container hint-red">
+        <span class="badge badge-red">🔴 強度提示 (高 - 直指關鍵)</span>
+        <p style="margin-top: 5px;">「請在平板上依序點選：解謎一選『B. 3 個』➔ 地圖向東走 3 格；解謎二選『A. 2』➔ 向南走 2 格；解謎三選『A. 9月21日』➔ 向東走 2 格。最終把定位點選在左側橫軸 -5、縱軸 2 的交叉點 `(-5, 2)` 藝文中心，即可過關。」</p>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- 關卡二 -->
+    <h1>📦 任務二：物資精算師 (物資限制與密碼鎖)</h1>
+    <p>小隊需要在有限的預算與負重下，精算避難包中的物資，並通過生存指數雷達圖評估。合格後將獲得一組終端密碼解鎖物資箱。</p>
+    
+    <h2>1. 標準答案與解謎邏輯</h2>
+    <ul>
+        <li><strong>裝備篩選三大硬性指標限制</strong>：
+            <ol>
+                <li>預算金額總上限：<strong>&lt;= 1000 元</strong></li>
+                <li>背包重量總上限：<strong>&lt;= 3500g</strong></li>
+                <li>生存評估價值分：<strong>&gt;= 80 分</strong></li>
+            </ol>
+        </li>
+        <li><strong>必選生存核心裝備（未選則判定退回）</strong>：
+            <ul>
+                <li>💧 <strong>瓶裝水</strong> (Survival: +25, $20, 650g) — 維持生命生存的絕對必需品。</li>
+                <li>📢 <strong>求生哨</strong> (Survival: +8, $25, 15g) — 用於在受困瓦礫下時發出求救信號。</li>
+                <li>🍪 <strong>高能量食物</strong> — 壓縮餅乾 (15分)、巧克力 (12分)、能量棒 (10分) 三者必須至少選取一項。</li>
+            </ul>
+        </li>
+        <li><strong>特殊羈絆彩蛋（皮卡丘收服降重機制）</strong>：
+            <p>物資箱中有一隻重達 6000g 的皮卡丘⚡與一顆 200g 的神奇寶貝球🔴。若玩家同時選擇了這兩者，將觸發隱藏彩蛋：<b>皮卡丘的 6000g 重量在背包明細中將直接歸零</b>！這也是小隊既能帶走皮卡丘，背包又不會超重的唯一方法。</p>
+        </li>
+        <li><strong>密碼鎖終端密碼</strong>：<strong><span class="text-blue">0 - 3 - 0</span></strong> (防災背包順利通過篩選後，背包結算明細內會給予工作人員綠色解鎖協議提示)。</li>
+    </ul>
+
+    <h2>2. 🗺️ 關卡間地點安全驗證（攔截問答）</h2>
+    <ul>
+        <li><strong>問答題目</strong>：下一任務的地點在校園何處？</li>
+        <li><strong>標準答案</strong>：<strong><span class="text-blue">健康中心</span></strong></li>
+        <li><strong>成功提示</strong>：<span class="text-green">"🔑 地點安全驗證成功！前往下一關卡的傳輸協議已解鎖。"</span></li>
+    </ul>
+
+    <h2>3. 💡 工作人員三階段提示卡</h2>
+    
+    <div class="hint-container hint-green">
+        <span class="badge badge-green">🟢 輕度提示 (淺 - 引導思考)</span>
+        <p style="margin-top: 5px;">「避難生存最重要的就是水和能夠求救的工具。檢查你的背包，有放進水和能吹出聲音哨子的東西嗎？」</p>
+        <p>「那些很重但對求生沒幫助的娛樂物（如啞鈴、原文書、VR眼鏡、化妝包、生魚片）只會白白浪費你的重量和錢，請果斷清除！」</p>
+    </div>
+
+    <div class="hint-container hint-yellow">
+        <span class="badge badge-yellow">🟡 中度提示 (中 - 縮小範圍)</span>
+        <p style="margin-top: 5px;">「檢查背包的價格和重量上限。你必須放進『瓶裝水』、『求生哨』，以及『壓縮餅乾、巧克力或能量棒』中的至少一種！」</p>
+        <p>「皮卡丘重達 6 公斤，如果你硬要選牠，一定得搭配選取『神奇寶貝球』，皮卡丘的重量就會神奇地變成 0 公克！」</p>
+    </div>
+
+    <div class="hint-container hint-red">
+        <span class="badge badge-red">🔴 強度提示 (高 - 直指關鍵)</span>
+        <p style="margin-top: 5px;">「在清單中勾選：瓶裝水、求生哨、壓縮餅乾，再搭配其他輕量高分物資（如手電筒、雨衣、急救包等）直到生存分數達 80 以上，點擊提交。然後在解鎖終端輸入密碼『0-3-0』。隨後的關卡攔截問答請輸入『健康中心』即可前行。」</p>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- 關卡三 -->
+    <h1>🩹 任務三：血色救援行動 (實境急救包紮)</h1>
+    <p>小隊需現場完成傷患急救包紮。工作人員（安全小幫手）需對頭部包紮與懸臂吊帶固定的實體成果進行嚴格的安全核對，並在平板上人工勾選 10 項指標予以放行。</p>
+    
+    <h2>1. 工作人員現場評估 10 項檢核對照表</h2>
+    <table>
+        <tr>
+            <th style="width: 15%;">包紮項目</th>
+            <th style="width: 10%;">編號</th>
+            <th style="width: 75%;">安全小幫手實地評核標準 (README 備忘)</th>
+        </tr>
+        <tr>
+            <td rowspan="5" class="strong-title" style="text-align: center;">頭部包紮<br>(帶狀三角巾)</td>
+            <td style="text-align: center;">1</td>
+            <td>敷料（紗布）已完全覆蓋患者頭部傷口，無滑移。</td>
+        </tr>
+        <tr>
+            <td style="text-align: center;">2</td>
+            <td>雙眼、雙耳已完整露出，絕無遮擋，未壓迫到視線及聽力。<br><b><span class="text-blue">【此處由小幫手進行檢核並勾選】</span></b></td>
+        </tr>
+        <tr>
+            <td style="text-align: center;">3</td>
+            <td>平結牢靠，且打在額頭或側邊的平整面上，完全避開頭後骨突處。<br><b><span class="text-blue">【此處由小幫手進行檢核並勾選】</span></b></td>
+        </tr>
+        <tr>
+            <td style="text-align: center;">4</td>
+            <td>包紮固定足夠牢固，在傷患左右輕度搖頭時無任何滑脫風險。<br><b><span class="text-blue">【此處由小幫手進行檢核並勾選】</span></b></td>
+        </tr>
+        <tr>
+            <td style="text-align: center;">5</td>
+            <td>傷患本人無任何不適或局部血管過度壓迫的緊繃感。<br><b><span class="text-blue">【此處由小幫手進行檢核並勾選】</span></b></td>
+        </tr>
+        <tr>
+            <td rowspan="5" class="strong-title" style="text-align: center;">懸臂固定<br>(三角巾吊帶)</td>
+            <td style="text-align: center;">1</td>
+            <td>懸臂吊帶手肘彎曲夾角符合標準（手高肘低，角度小於 90 度）。<br><b><span class="text-blue">【此處由小幫手進行檢核】</span></b></td>
+        </tr>
+        <tr>
+            <td style="text-align: center;">2</td>
+            <td>三角巾頂角於手肘後方以旋轉打結或安全別針妥善收折固定。<br><b><span class="text-blue">【此處由小幫手進行檢核】</span></b></td>
+        </tr>
+        <tr>
+            <td style="text-align: center;">3</td>
+            <td>頸部的平結位置偏向健側鎖骨凹陷處，完全避開頸椎正後方的壓迫。<br><b><span class="text-blue">【此處由小幫手進行檢核】</span></b></td>
+        </tr>
+        <tr>
+            <td style="text-align: center;">4</td>
+            <td>指尖必須露出，以便於工作人員隨時觀察與測試末梢血液循環。<br><b><span class="text-blue">【此處由小幫手進行檢核】</span></b></td>
+        </tr>
+        <tr>
+            <td style="text-align: center;">5</td>
+            <td>經小幫手捏壓測試，指甲微血管回血充盈時間小於 2 秒，血循正常。<br><b><span class="text-blue">【此處由小幫手進行檢核】</span></b></td>
+        </tr>
+    </table>
+    <ul>
+        <li><strong>包紮核定成功提示</strong>：<span class="text-green">"🟢 實境包紮核定：【包紮牢固、打結避開突骨、血循完全正常】！檢核正式通過！"</span>。</li>
+        <li><strong>下一關關鍵定位座標</strong>：<strong><span class="text-green">座標 (0, 3)</span></strong>（對應實地地標：<strong>綜合大樓 — 司令台</strong>）。</li>
+    </ul>
+
+    <h2>2. 🗺️ 關卡間地點安全驗證（攔截問答）</h2>
+    <ul>
+        <li><strong>問答題目</strong>：下一任務的地點在校園何處？</li>
+        <li><strong>標準答案</strong>：<strong><span class="text-blue">司令台</span></strong></li>
+        <li><strong>成功提示</strong>：<span class="text-green">"🔑 地點安全驗證成功！前往下一關卡的傳輸協議已解鎖。"</span></li>
+    </ul>
+
+    <h2>3. 💡 工作人員三階段提示卡</h2>
+    
+    <div class="hint-container hint-green">
+        <span class="badge badge-green">🟢 輕度提示 (淺 - 引導思考)</span>
+        <p style="margin-top: 5px;">「請參考平板上提供的急救圖片。頭部包紮的打結點如果直接打在頭骨最突出的後腦勺，傷患躺下時會產生嚴重的壓迫性疼痛，試著調整打結位置！」</p>
+        <p>「懸臂固定時，手肘受傷需要高於心臟防腫脹。看看你們的三角巾，有做到『手高肘低』且露出手指尖嗎？」</p>
+    </div>
+
+    <div class="hint-container hint-yellow">
+        <span class="badge badge-yellow">🟡 中度提示 (中 - 縮小範圍)</span>
+        <p style="margin-top: 5px;">「頭部的平結必須打在額頭前方或耳朵上方的平整處；吊帶頸部的平結必須偏向健側（沒受傷的那一邊）鎖骨凹陷處，絕對不能打在後頸椎正中央，否則會壓迫脊椎神經！」</p>
+        <p>「露出手指尖的目的，是為了讓小幫手按壓指甲，觀察指甲床放開後，微血管是否在 2 秒內迅速恢復紅潤！」</p>
+    </div>
+
+    <div class="hint-container hint-red">
+        <span class="badge badge-red">🔴 強度提示 (高 - 直指關鍵)</span>
+        <p style="margin-top: 5px;">（工作人員手把手微調動作）「幫他們將頭部結打在額前，懸臂結移至健側鎖骨。角度調小於90度，肘後頂角扭轉塞入。完成後，由工作人員在小隊平板上將這 10 個檢核勾選框全部點選並提交。隨後出現的地點驗證輸入『司令台』。」</p>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- 關卡四 -->
+    <h1>🛡️ 任務四：真相的迷霧 (媒體識讀與防詐防霸凌)</h1>
+    <p>小隊需利用平板的情報解密工具，過濾假新聞，在真實照片上進行光學圖層掃描，並識別出教育部官方平安防禦網域連結。</p>
+    
+    <h2>1. 標準答案與解謎邏輯</h2>
+    
+    <h3>步驟一：火警情報解析</h3>
+    <ul>
+        <li><strong>排查規則</strong>：排除匿名論壇(9), IG限動(5), 內容農場(8)等匿名且不具真實來源的假新聞卡片，留下其餘 3 張【真實情報】，將卡片角落的數字<b>由小到大</b>排列。</li>
+        <li><strong>真實情報數字卡</strong>：`0`、`3`、`7`。</li>
+        <li><strong>標準答案</strong>：<strong><span class="text-blue">037</span></strong>。</li>
+        <li><strong>解密成功提示</strong>：<span class="text-green">"火警情報 analysis 成功！淘汰了假新聞，解鎖鑑識平板！"</span>。</li>
+    </ul>
+
+    <h3>步驟二：影像圖層鑑識</h3>
+    <ul>
+        <li><strong>解密線索</strong>：點擊平板上的照片 A、B、C 進行比對。照片 C 是唯一「無任何畫面扭曲或破綻」的現場照片。將半透明的「光學掃描板」拖曳疊加至照片 C 中央，紅框內會顯現出隱藏的四位數密碼。</li>
+        <li><strong>標準答案</strong>：<strong><span class="text-blue">2048</span></strong>。</li>
+        <li><strong>解密成功提示</strong>：<span class="text-green">"影像鑑識成功！鎖定真實場景，開啟最後的官方防線網域！"</span>。</li>
+    </ul>
+
+    <h3>步驟三：官方平安防線驗證</h3>
+    <ul>
+        <li><strong>謎題說明</strong>：防範外部釣魚網址假冒官方網站，選出真正隸屬於教育部的官方校園安全防禦網絡連結。</li>
+        <li><strong>網址選項比對</strong>：
+            <ul>
+                <li>A. `www.edu.tw.campus-security.login-auth.com` (❌ 假域名釣魚)</li>
+                <li>B. `www.edutw-campus-safety.org` (❌ 假網址拼寫)</li>
+                <li>C. `www.edu.tw/campus-safety` (✅ 正確二級目錄官方網址)</li>
+            </ul>
+        </li>
+        <li><strong>標準答案</strong>：<strong><span class="text-blue">選項 C</span></strong>。</li>
+        <li><strong>解密成功提示</strong>：<span class="text-green">"官方防線驗證成功，通關成功！"</span> (解密獲取座標 `(-2, 6)`)。</li>
+    </ul>
+
+    <h2>2. 🗺️ 關卡間地點安全驗證（攔截問答）</h2>
+    <ul>
+        <li><strong>問答題目</strong>：下一任務的地點在校園何處？</li>
+        <li><strong>標準答案</strong>：<strong><span class="text-blue">維新館</span></strong></li>
+        <li><strong>成功提示</strong>：<span class="text-green">"🔑 地點安全驗證成功！前往下一關卡的傳輸協議已解鎖。"</span></li>
+    </ul>
+
+    <h2>3. 💡 工作人員三階段提示卡</h2>
+    
+    <div class="hint-container hint-green">
+        <span class="badge badge-green">🟢 輕度提示 (淺 - 引導思考)</span>
+        <p style="margin-top: 5px;">「階段 1 中，帶有強烈情緒字眼、匿名論壇爆料、或是來源不明的截圖，高機率是假新聞！請排除它們，只保留正式署名卡片，並把角落數字從小排到大。」</p>
+        <p>「階段 2 照片 A 和 B 有很明顯的 AI 扭曲痕跡，只有照片 C 是真實的。把掃描板拖曳到照片 C 的正中央紅色標記處尋找密碼。」</p>
+        <p>「階段 3 真正的政府或教育部域名是以 `.edu.tw` 結尾，且二級目錄會用斜線 `/` 連接，絕非以點 `.` 或橫線 `-` 串聯外部網域名稱！」</p>
+    </div>
+
+    <div class="hint-container hint-yellow">
+        <span class="badge badge-yellow">🟡 中度提示 (中 - 縮小範圍)</span>
+        <p style="margin-top: 5px;">「階段 1 的真實情報角落數字為 0、3、7，由小到大排列即是解鎖密碼。」</p>
+        <p>「階段 2 將掃描板重合在照片 C 的紅框內，會顯示出一個與 1024 翻倍有關的四位數字。」</p>
+        <p>「階段 3 選項中，A 的主網域是 `login-auth.com`，B 是 `edutw-campus-safety.org`，均是釣魚網站，只有選項 C 指向合法的教育部網域。」</p>
+    </div>
+
+    <div class="hint-container hint-red">
+        <span class="badge badge-red">🔴 強度提示 (高 - 直指關鍵)</span>
+        <p style="margin-top: 5px;">「直接依序輸入答案：第一階段密碼輸入『037』；第二階段密碼輸入『2048』；第三階段選擇『選項 C』。過關後的地點驗證攔截輸入『維新館』即可直接前往主機室。」</p>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- 關卡五 -->
+    <h1>⚙️ 任務五：重啟神盾防線 (口號修復與結局)</h1>
+    <p>小隊實地前往校園 12 處地標收集字母單字，並在平板中拼裝出「三大經典安全應變口號」以重新重啟神盾防線。</p>
+    
+    <h2>1. 標準答案與解謎邏輯</h2>
+    <ul>
+        <li><strong>各地標收集單字對照清單</strong>：
+            <ul>
+                <li><strong>地震集合點</strong>：操場 ➔ <span class="text-blue">ATTENTION</span> | 維新館 ➔ <span class="text-blue">SAFE</span></li>
+                <li><strong>AED 放置處</strong>：活動中心 ➔ <span class="text-blue">CALM</span> | 健康中心 ➔ <span class="text-red">CLAM (⚠️ 惡意干擾單字！意為蛤蜊)</span></li>
+                <li><strong>防空避難牌</strong>：綜合大樓 ➔ <span class="text-blue">OTHERS</span> | 更新樓 1F ➔ <span class="text-blue">DOWN</span> | 資源教室 ➔ ESCAPE | 司令台 ➔ WARNING</li>
+                <li><strong>消防設備處</strong>：精進樓 ➔ <span class="text-blue">PAY</span> | 藝文中心 ➔ <span class="text-blue">HELPS</span> | 員生社 ➔ ALARM | 警衛室 ➔ READY</li>
+            </ul>
+        </li>
+        <li><strong>安全口號組合規則</strong>：
+            <p>小隊必須從探索到的單字中挑選 6 個，在平板的拼裝區內正確拼出以下<strong>三大經典安全應變口號</strong>（片語的先後順序不限，但片語內部的單字順序必須完全正確）：</p>
+            <div style="background-color: #f3f4f6; padding: 10px; border-radius: 4px; font-weight: bold; color: #1e3a8a; border: 1px solid #d1d5db;">
+                1. PAY ATTENTION （集中注意）<br>
+                2. CALM DOWN （保持冷靜）<br>
+                3. HELPS OTHERS （主動助人）
+            </div>
+            <p><span class="text-red"><b>【工作人員極重要備忘】</b></span>：健康中心收集到的單字是 <b>CLAM</b> (蛤蜊)，而冷靜的拼法是 <b>CALM</b>。若玩家將干擾單字 CLAM 放入組合區內，系統將判定口號拼寫失敗。需提醒玩家仔細觀察單字的英文字母順序。</p>
+        </li>
+        <li><strong>重啟系統成功提示</strong>：<span class="text-green">"啟動神盾系統重啟程式，進入最終結局榮譽頁面！"</span>。</li>
+    </div>
+
+    <h2>2. 💡 工作人員三階段提示卡</h2>
+    
+    <div class="hint-container hint-green">
+        <span class="badge badge-green">🟢 輕度提示 (淺 - 引導思考)</span>
+        <p style="margin-top: 5px;">「點擊地圖上的 12 處地標按鈕探索字母！注意，有許多單字只是用來混淆你們的輔助字，只需要找出能夠組合成三大常用應變口號的 6 個關鍵字。」</p>
+        <p>「檢查你們放入組合區的單字語意。『保持冷靜』的英文拼音有正確嗎？C-A-L-M 是冷靜，C-L-A-M 是蛤蜊，兩者長得很像但意思完全不同喔！」</p>
+    </div>
+
+    <div class="hint-container hint-yellow">
+        <span class="badge badge-yellow">🟡 中度提示 (中 - 縮小範圍)</span>
+        <p style="margin-top: 5px;">「丟棄 CLAM、ESCAPE、WARNING、ALARM、READY 等干擾字，保留核心單字。」</p>
+        <p>「請用這 6 個單字拼出三個經典的兩單字口號：『專心注意』(PAY ...)、『保持冷靜』(CALM ...)、『幫助別人』(HELPS ...)。」</p>
+    </div>
+
+    <div class="hint-container hint-red">
+        <span class="badge badge-red">🔴 強度提示 (高 - 直指關鍵)</span>
+        <p style="margin-top: 5px;">「請在組合區放入這 6 個單字並排成三個片語：『PAY ATTENTION』、『CALM DOWN』、『HELPS OTHERS』（三個片語的上下順序可以隨意調換），排列完成後點選驗證重啟，即可順利通關進入大結局！」</p>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- 終局榮譽評價 -->
+    <h1>🎖️ 神盾防衛隊榮譽榜與稱號機制</h1>
+    <p>小隊通關後，平板將跳轉至大結局頁面。系統會調用 `generateTeamTitle()` 函數，根據玩家本次通關的<b>「累計失敗次數」</b>與<b>「通關消耗時間」</b>，即時評定並渲染專屬的英雄稱號與戰術勛章，工作人員可引導小隊進行榮譽合影留念：</p>
+    
+    <h2>1. 榮譽稱號評定標準對照表</h2>
+    <table>
+        <tr>
+            <th style="width: 25%;">🏆 戰術稱號</th>
+            <th style="width: 15%;">失敗次數</th>
+            <th style="width: 60%;">工作人員終局導引與評價推薦語</th>
+        </tr>
+        <tr>
+            <td class="strong-title" style="color: #ca8a04;">傳奇神盾指揮官<br>(Legendary Commander)</td>
+            <td style="text-align: center;"><span class="text-green">0 次</span></td>
+            <td><strong>極致完美的教科書級防衛！</strong><br>「恭喜小隊展現了零失誤的絕佳戰術素養！這份冷靜與敏捷是實至名歸的最高榮譽，請大家一起拿著平板合影留念！」</td>
+        </tr>
+        <tr>
+            <td class="strong-title" style="color: #3b82f6;">精銳安全開拓者<br>(Elite Pioneer)</td>
+            <td style="text-align: center;"><span class="text-yellow">1 - 3 次</span></td>
+            <td><strong>冷靜應變的實戰精英！</strong><br>「在面臨威脅與關卡攔截時，小隊能迅速找出盲點、修復錯誤，展現出極佳的危機處理應變力！來，讓我們一起拍下榮譽的一刻！」</td>
+        </tr>
+        <tr>
+            <td class="strong-title" style="color: #6b7280;">堅毅防禦鐵衛<br>(Resilient Guard)</td>
+            <td style="text-align: center;"><span class="text-red">4 次 (含) 以上</span></td>
+            <td><strong>百折不撓的安全鐵衛！</strong><br>「雖然過程中遭遇多次警報，但小隊不畏挫折、越挫越勇，成功在時限內重啟了神盾防線！這種百折不撓的求生精神非常令人敬佩！」</td>
+        </tr>
+    </table>
+    
+    <h2>2. 小隊交接與重置準備</h2>
+    <p>合影完成後，請工作人員在結局頁面底部點選<strong>「重新玩一次」</strong>按鈕。平板將自動清空本次隊伍的本地探索狀態、清除 localStorage 狀態標記，並引導回 screen-welcome 歡迎首頁，此時平板即初始化完成，可隨時交接給下一組小隊！</p>
+
+    <div style="margin-top: 100px; text-align: center; color: #9ca3af; font-size: 10pt;">
+        * 本專案工作人員手冊由 Google DeepMind 團隊 Advanced Agentic Coding 設計與支持，祝大賽舉辦順利！ *
+    </div>
+
+</body>
+</html>
