@@ -4593,8 +4593,8 @@
         // ---------------------------------------------------
         // 4.1.3 新增：雲端資料庫雙向同步機制 (解決多裝置部署無法共享紀錄問題)
         // ---------------------------------------------------
-        const CLOUD_DB_URL = "https://kvdb.io/trump_mission_secret_bucket_2026_aegis/all_teams";
-        const CLOUD_CONFIG_URL = "https://kvdb.io/trump_mission_secret_bucket_2026_aegis/exploration_mode";
+        const CLOUD_DB_URL = "https://extendsclass.com/api/json-storage/bin/cdabfef";
+        const CLOUD_CONFIG_URL = "https://extendsclass.com/api/json-storage/bin/faeabec";
         let lastSyncedState = "";
 
         async function syncProgressToCloud(force = false) {
@@ -4650,7 +4650,10 @@
                 
                 // 3. 上傳回雲端
                 await fetch(CLOUD_DB_URL, {
-                    method: 'POST',
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify(merged)
                 });
                 
@@ -4701,7 +4704,10 @@
         async function syncExplorationModeToCloud(mode) {
             try {
                 await fetch(CLOUD_CONFIG_URL, {
-                    method: 'POST',
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify({ mode: mode })
                 });
             } catch (e) {
@@ -5043,7 +5049,10 @@
                 
                 // 上傳同步到雲端以完全刪除
                 fetch(CLOUD_DB_URL, {
-                    method: 'POST',
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify(teams)
                 }).then(() => {
                     showToast('已刪除隊伍「' + name + '」的紀錄並同步至雲端', "warning");
