@@ -642,11 +642,11 @@
                         </p>
                         <p class="text-[10px] text-gray-400">循序模式下玩家必須按順序破解關卡，自由探索則無限制。</p>
                         <div class="flex gap-2">
-                            <button onclick="staffSetExplorationMode('sequential')" id="btn-mode-seq" class="flex-1 bg-gray-800 hover:bg-gray-750 text-gray-400 font-bold text-[11px] py-2 rounded-lg border border-gray-700 transition-all">
-                                🔒 循序探索
+                            <button onclick="staffSetExplorationMode('sequential')" id="btn-mode-seq" class="flex-1 bg-cyan-600 hover:bg-cyan-500 text-white font-extrabold text-[11px] py-2 rounded-lg transition-all shadow-md">
+                                🔒 循序探索 (預設)
                             </button>
-                            <button onclick="staffSetExplorationMode('free')" id="btn-mode-free" class="flex-1 bg-cyan-600 hover:bg-cyan-500 text-white font-extrabold text-[11px] py-2 rounded-lg transition-all shadow-md">
-                                🔓 自由探索 (預設)
+                            <button onclick="staffSetExplorationMode('free')" id="btn-mode-free" class="flex-1 bg-gray-800 hover:bg-gray-750 text-gray-400 font-bold text-[11px] py-2 rounded-lg border border-gray-700 transition-all">
+                                🔓 自由探索
                             </button>
                         </div>
                     </div>
@@ -2127,7 +2127,7 @@
         let teamName = "";
         let gameCleared = false; // 是否已通關標記
         let failureCount = 0;
-        let explorationMode = "free"; // 預設自由探索
+        let explorationMode = "sequential"; // 預設循序探索
         let activeScreen = "screen-welcome";
         let activeQuestId = null;
 
@@ -4834,18 +4834,72 @@
         }
 
         // ---------------------------------------------------
-        // 4.2 新增：調整任務二狀態列位置以防被 game-hud 遮擋
+        // 4.3 新增：工作人員後台快速測試與模式切換函數
         // ---------------------------------------------------
-        function adjustQuest2StatusBar() {
-            const gameHud = document.getElementById('game-hud');
-            const statusBar = document.querySelector('.status-bar');
-            if (statusBar) {
-                if (gameHud && !gameHud.classList.contains('hidden')) {
-                    statusBar.style.top = gameHud.offsetHeight + 'px';
-                } else {
-                    statusBar.style.top = '0px';
-                }
+        function staffMockStart() {
+            const val = document.getElementById('staff-mock-team').value.trim();
+            const name = val || "測試小隊";
+            
+            playSound('success');
+            initNewPlaythroughState(name);
+            
+            document.getElementById('display-team-name').innerText = teamName;
+            document.getElementById('team-badge').classList.remove('hidden');
+            document.getElementById('header-home-btn').style.display = 'flex';
+            
+            updateFailureDisplay();
+            startTimer();
+            
+            showToast(`已成功以「${name}」模擬玩家登入，計時已啟動！`, "success");
+            updateStaffDashboard();
+        }
+
+        function staffToggleQuest(questId) {
+            if (!teamName) {
+                showToast("請先模擬登入或讓玩家登入，再行切換任務狀態！", "warning");
+                playSound('fail');
+                return;
             }
+            
+            questStatus[questId] = !questStatus[questId];
+            playSound('success');
+            
+            const statusStr = questStatus[questId] ? "已開啟(已通關)" : "已關閉(未通關)";
+            showToast(`任務 ${questId} 狀態已變更為：${statusStr}`, "success");
+            
+            updateMenuProgress(); // 同步更新玩家選單介面狀態
+            updateStaffDashboard(); // 更新後台數據
+            saveCurrentTeamProgress(); // 保存/同步進度
+        }
+
+        function staffSetExplorationMode(mode) {
+            explorationMode = mode;
+            playSound('success');
+            
+            const seqBtn = document.getElementById('btn-mode-seq');
+            const freeBtn = document.getElementById('btn-mode-free');
+            
+            if (mode === 'sequential') {
+                if (seqBtn) {
+                    seqBtn.className = "flex-1 bg-cyan-600 hover:bg-cyan-500 text-white font-extrabold text-[11px] py-2 rounded-lg transition-all shadow-md";
+                }
+                if (freeBtn) {
+                    freeBtn.className = "flex-1 bg-gray-800 hover:bg-gray-750 text-gray-400 font-bold text-[11px] py-2 rounded-lg border border-gray-700 transition-all";
+                }
+                showToast("探索模式已切換為：🔒 循序探索！", "success");
+            } else {
+                if (seqBtn) {
+                    seqBtn.className = "flex-1 bg-gray-800 hover:bg-gray-750 text-gray-400 font-bold text-[11px] py-2 rounded-lg border border-gray-700 transition-all";
+                }
+                if (freeBtn) {
+                    freeBtn.className = "flex-1 bg-cyan-600 hover:bg-cyan-500 text-white font-extrabold text-[11px] py-2 rounded-lg transition-all shadow-md";
+                }
+                showToast("探索模式已切換為：🔓 自由探索！", "success");
+            }
+            
+            updateStaffDashboard();
+            saveCurrentTeamProgress();
+            updateMenuProgress();
         }
 
         window.onload = function() {
