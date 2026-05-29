@@ -461,7 +461,7 @@
                             <div class="bg-slate-950/40 p-2 rounded border border-gray-800/40">
                                 <span class="text-orange-300 font-bold block mb-0.5">🔒 密碼鎖終端解譯</span>
                                 <p class="text-white font-bold">🔑 解鎖密碼：0 - 3 - 0</p>
-                                <p class="text-emerald-400 text-[10px] mt-1">💬 解鎖成功提示："解鎖取得「主機室通行卡」與物資箱位置座標(0,0)"</p>
+                                <p class="text-emerald-400 text-[10px] mt-1">💬 解鎖成功提示："解鎖取得「主機室通行卡」與物資箱位置座標(2,0)"</p>
                             </div>
                             <div class="bg-slate-950/40 p-2 rounded border border-gray-800/40 border-l-2 border-l-yellow-500">
                                 <span class="text-yellow-400 font-bold block mb-0.5">🛑 下一任務地點解密問答 (關卡攔截)</span>
@@ -882,7 +882,6 @@
                                     <path d="M 10.4 0 L 0 0 0 10.4" fill="none" stroke="#e2e8f0" stroke-width="0.5"/>
                                 </pattern>
                                 <pattern id="grid" width="52" height="52" patternUnits="userSpaceOnUse" x="400" y="480">
-                                    <rect width="52" height="52" fill="url(#smallGrid)"/>
                                     <path d="M 52 0 L 0 0 0 52" fill="none" stroke="#94a3b8" stroke-width="3"/>
                                 </pattern>
                             </defs>
@@ -1352,36 +1351,6 @@
                         </div>
                     </div>
 
-                    <!-- 單字組合區 & 背包 -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <!-- 組合區 -->
-                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between">
-                            <div>
-                                <h2 class="text-xl font-black text-slate-800 mb-2 flex items-center gap-2">
-                                    <span>🧩</span> 組合安全原則
-                                </h2>
-                                <p class="text-xs text-slate-500 font-bold mb-4">請點擊 6 個單字組出 3 個片語形成校園安全應變口號。</p>
-                                <div id="q5-sentence-container" class="min-h-[100px] bg-slate-50 rounded-xl border-2 border-dashed border-slate-300 p-4 flex flex-wrap gap-2 items-center justify-center mb-6">
-                                    <!-- 由 JS 動態生成 -->
-                                </div>
-                            </div>
-                            <button onclick="q5_verifySlogan()" class="w-full bg-slate-800 text-white font-black py-4 rounded-xl hover:bg-slate-700 transition-colors shadow-md flex items-center justify-center gap-2">
-                                <span>🔍</span> 驗證組合口號
-                            </button>
-                        </div>
-
-                        <!-- 背包 (已收集：0/6) -->
-                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col">
-                            <h3 class="text-xl font-black text-slate-800 mb-2 flex items-center gap-2">
-                                <span>🎒</span> 背包 (已收集：<span id="q5-backpack-count">0</span>/6)
-                            </h3>
-                            <p class="text-xs text-slate-500 font-bold mb-4">點擊下方單字移入左側組合區；若背包已滿，可點擊紅色的 ✕ 丟棄單字以空出容量。</p>
-                            <div id="q5-backpack-container" class="flex flex-wrap gap-2 flex-1 min-h-[100px] items-start">
-                                <!-- 由 JS 動態生成 -->
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- 地圖區域 -->
                     <div class="w-full bg-white rounded-2xl shadow-sm border border-slate-200 p-4 md:p-6 overflow-x-auto">
                         <div class="bg-slate-800 text-white p-4 rounded-xl font-black mb-6">🗺️ 基隆商工平面圖</div>
@@ -1528,6 +1497,36 @@
 
                             <!-- 紅點容器 (動態渲染) -->
                             <div id="q5-pins-container"></div>
+                        </div>
+                    </div>
+
+                    <!-- 單字組合區 & 背包 -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- 組合區 -->
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between">
+                            <div>
+                                <h2 class="text-xl font-black text-slate-800 mb-2 flex items-center gap-2">
+                                    <span>🧩</span> 組合安全原則
+                                </h2>
+                                <p class="text-xs text-slate-500 font-bold mb-4">請點擊 6 個單字組出 3 個片語形成校園安全應變口號。</p>
+                                <div id="q5-sentence-container" class="min-h-[100px] bg-slate-50 rounded-xl border-2 border-dashed border-slate-300 p-4 flex flex-wrap gap-2 items-center justify-center mb-6">
+                                    <!-- 由 JS 動態生成 -->
+                                </div>
+                            </div>
+                            <button onclick="q5_verifySlogan()" class="w-full bg-slate-800 text-white font-black py-4 rounded-xl hover:bg-slate-700 transition-colors shadow-md flex items-center justify-center gap-2">
+                                <span>🔍</span> 驗證組合口號
+                            </button>
+                        </div>
+
+                        <!-- 背包 (已收集：0/6) -->
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col">
+                            <h3 class="text-xl font-black text-slate-800 mb-2 flex items-center gap-2">
+                                <span>🎒</span> 背包 (已收集：<span id="q5-backpack-count">0</span>/6)
+                            </h3>
+                            <p class="text-xs text-slate-500 font-bold mb-4">點擊下方單字移入左側組合區；若背包已滿，可點擊紅色的 ✕ 丟棄單字以空出容量。</p>
+                            <div id="q5-backpack-container" class="flex flex-wrap gap-2 flex-1 min-h-[100px] items-start">
+                                <!-- Guide text and container -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1683,7 +1682,6 @@
                                    <path d="M 10.4 0 L 0 0 0 10.4" fill="none" stroke="#e2e8f0" stroke-width="0.5"/>
                                </pattern>
                                <pattern id="grid-global" width="52" height="52" patternUnits="userSpaceOnUse" x="400" y="480">
-                                   <rect width="52" height="52" fill="url(#smallGrid-global)"/>
                                    <path d="M 52 0 L 0 0 0 52" fill="none" stroke="#94a3b8" stroke-width="3"/>
                                </pattern>
                            </defs>
@@ -1947,7 +1945,7 @@
             <div class="bg-stone-900/80 border border-emerald-500/30 rounded-2xl p-6 mb-6 space-y-4 text-left">
                 <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                     <span class="text-sm text-slate-300">📦 備用物資庫位置</span>
-                    <span class="font-bold text-emerald-400 tech-font text-base blink-effect">座標 (0, 0)</span>
+                    <span class="font-bold text-emerald-400 tech-font text-base blink-effect">座標 (2,0)</span>
                 </div>
                 
                 <div class="flex items-center justify-between pt-1">
@@ -3167,7 +3165,7 @@
                     
                     
                     <div class="bg-blue-50 border-l-4 border-blue-500 p-3 mt-4 text-xs md:text-sm text-slate-700">
-                        <b>📍 操作指南：</b> 閱讀平板上的任務，根據<span class="text-blue-700 font-bold">「國家防災日 6大準備原則與抗震3步驟」</span>進行數學與邏輯推演。作答正確後彈窗將會自動關閉，請在加密網格地圖上，<span class="text-cyan-600 font-bold">「直接點選」</span>推算出來的最新格點座標，指引你們前往存放物資箱的地點！
+                        <b>📍 操作指南：</b> 閱讀平板上的任務，根據<span class="text-blue-700 font-bold">「國家防災日防災準備原則」</span>進行數學與邏輯推演。作答正確後彈窗將會自動關閉，請在加密網格地圖上，<span class="text-cyan-600 font-bold">「直接點選」</span>推算出來的最新格點座標，指引你們前往存放物資箱的地點！
                     </div>
 
                     <div class="mt-6 pt-4 border-t border-slate-200">
@@ -4033,8 +4031,8 @@
         const Q5_HINTS = [
             { id: "earthquake", text: "📍 地震後校園集合地點", locationIds: [1, 2] },
             { id: "aed", text: "📍 AED放置處", locationIds: [3, 4] },
-            { id: "air_shelter", text: "📍 防空避難指示牌", locationIds: [5, 6, 7, 8] },
-            { id: "fire_hydrant", text: "📍 消防栓", locationIds: [9, 10, 11, 12] }
+            { id: "air_shelter", text: "📍 防空避難指示牌x2", locationIds: [5, 6, 7, 8] },
+            { id: "fire_hydrant", text: "📍 消防栓x2", locationIds: [9, 10, 11, 12] }
         ];
 
         const Q5_LOCATIONS = [
@@ -4042,14 +4040,14 @@
             { id: 2, name: "維新館", role: "地震後校園集合地點", word: "SAFE", x: 37, y: 24 },
             { id: 3, name: "活動中心", role: "AED放置處", word: "CALM", x: 41, y: 65 },
             { id: 4, name: "健康中心", role: "AED放置處", word: "CLAM", x: 62, y: 76.5 },
-            { id: 5, name: "綜合大樓", role: "防空避難指示牌", word: "OTHERS", x: 39, y: 82 },
-            { id: 6, name: "更新樓 1F", role: "防空避難指示牌", word: "DOWN", x: 69, y: 41 },
-            { id: 7, name: "資源教室", role: "防空避難指示牌", word: "ESCAPE", x: 74, y: 55.5 },
-            { id: 8, name: "司令台", role: "防空避難指示牌", word: "WARNING", x: 49, y: 53.5 },
-            { id: 9, name: "精進樓 綜職三", role: "消防栓", word: "PAY", x: 82, y: 92 },
-            { id: 10, name: "藝文中心", role: "消防栓", word: "HELPS", x: 14, y: 64.5 },
-            { id: 11, name: "員生社", role: "消防栓", word: "ALARM", x: 62, y: 91 },
-            { id: 12, name: "警衛室", role: "消防栓", word: "READY", x: 78.5, y: 95 }
+            { id: 5, name: "綜合大樓", role: "防空避難指示牌x2", word: "OTHERS", x: 39, y: 82 },
+            { id: 6, name: "更新樓 1F", role: "防空避難指示牌x2", word: "DOWN", x: 69, y: 41 },
+            { id: 7, name: "資源教室", role: "防空避難指示牌x2", word: "ESCAPE", x: 74, y: 55.5 },
+            { id: 8, name: "司令台", role: "防空避難指示牌x2", word: "WARNING", x: 49, y: 53.5 },
+            { id: 9, name: "精進樓 綜職三", role: "消防栓x2", word: "PAY", x: 82, y: 92 },
+            { id: 10, name: "藝文中心", role: "消防栓x2", word: "HELPS", x: 14, y: 64.5 },
+            { id: 11, name: "員生社", role: "消防栓x2", word: "ALARM", x: 62, y: 91 },
+            { id: 12, name: "警衛室", role: "消防栓x2", word: "READY", x: 78.5, y: 95 }
         ];
 
         let q5_selectedHintId = null;
