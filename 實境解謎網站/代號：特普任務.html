@@ -609,14 +609,15 @@
                     <h3 class="font-bold text-yellow-500 text-sm flex items-center gap-1.5">
                         <i data-lucide="monitor" class="w-4 h-4"></i> 全隊伍即時解謎狀態與排名監控
                     </h3>
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-3 flex-wrap">
                         <button onclick="staffSyncCloudRankings()" id="btn-cloud-sync" class="bg-cyan-600 hover:bg-cyan-500 text-black font-extrabold text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all shadow-md active:scale-95">
                             <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
                             <span>🔄 更新最新進度與排名</span>
                         </button>
-                        <span class="text-[10px] bg-green-950/80 text-green-400 border border-green-800 px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <span id="staff-sync-badge" class="text-[10px] bg-green-950/80 text-green-400 border border-green-800 px-2 py-0.5 rounded-full flex items-center gap-1">
                             <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-ping"></span> 實時更新中
                         </span>
+                        <span id="staff-last-sync" class="text-[10px] text-gray-400 font-mono">最後同步時間：未同步</span>
                     </div>
                 </div>
                 
@@ -2270,15 +2271,35 @@
                 window.scrollTo(0, 0); // 切換畫面時自動捲動至頂部
                 
                 if (screenId === 'screen-staff-dashboard') {
-                    updateStaffDashboard();
-                    syncProgressFromCloud().then(() => updateStaffDashboard()); // 點開後台時自動背景同步一次
+                    // 顯示雲端載入中動畫，給工作人員最即時、透明的連線反饋！
+                    const tbody = document.getElementById('staff-ranking-table-body');
+                    if (tbody) {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="9" class="py-12 text-center text-slate-500 font-mono">
+                                    <div class="flex flex-col items-center justify-center gap-3">
+                                        <i data-lucide="loader" class="w-8 h-8 animate-spin text-yellow-500"></i>
+                                        <span class="text-sm font-bold text-yellow-500/90">📡 正在從 Google 試算表載入最新實時排行數據...</span>
+                                        <span class="text-[10px] text-gray-500">正在建立與 Google Apps Script API 的安全連線</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                        if (typeof lucide !== 'undefined') lucide.createIcons();
+                    }
+                    
+                    updateStaffDashboard(true); // 傳入 true 表示跳過表格渲染，保留外部自定義的載入動畫
+                    
+                    syncProgressFromCloud().then(() => {
+                        updateStaffDashboard();
+                    });
                     syncExplorationModeFromCloud();
                     
                     let tickCount = 0;
                     staffDashboardInterval = setInterval(() => {
                         updateStaffDashboard();
                         tickCount++;
-                        if (tickCount % 400 === 0) { // 每 10 分鐘自動從雲端同步一次所有小隊排行與模式
+                        if (tickCount % 10 === 0) { // 每 15 秒 (10 * 1.5秒) 自動從雲端同步一次所有小隊排行與模式 (符合工作人員即時監控需求)
                             syncProgressFromCloud().then(() => updateStaffDashboard());
                             syncExplorationModeFromCloud();
                         }
@@ -4588,7 +4609,7 @@
             }
         };
 
-        function updateStaffDashboard() {
+        function updateStaffDashboard(skipTableRender = false) {
             const raw = document.getElementById('staff-raw-status');
             if (raw) {
                 raw.innerText = JSON.stringify({
@@ -4602,6 +4623,8 @@
                     探索模式設定: explorationMode
                 }, null, 4);
             }
+            
+            if (skipTableRender) return; // 跳過表格渲染，保留外部自定義的載入動畫
             
             // 渲染中控平台全隊伍監控表
             const tbody = document.getElementById('staff-ranking-table-body');
@@ -4792,8 +4815,8 @@
                     // 雲端數據為絕對真理 (Source of Truth)
                     let merged = [...cloudTeams];
                     
-                    // 若有本地活躍小隊，則保護其本機進度防覆蓋
-                    if (teamName) {
+                    // 若有本地活躍小隊且非處於工作人員中控模式下，則保護其本機進度防覆蓋
+                    if (teamName && activeScreen !== 'screen-staff-dashboard') {
                         let myLocalTeam = localTeams.find(t => t.name === teamName);
                         if (myLocalTeam) {
                             let cloudTeamIdx = merged.findIndex(t => t.name === teamName);
@@ -4812,10 +4835,28 @@
                     }
                     
                     localStorage.setItem('trump_mission_teams', JSON.stringify(merged));
+                    
+                    // 更新後台最後同步時間與連線狀態
+                    const lastSyncEl = document.getElementById('staff-last-sync');
+                    if (lastSyncEl) {
+                        const now = new Date();
+                        const timeStr = now.toTimeString().split(' ')[0];
+                        lastSyncEl.innerHTML = `最後同步時間：<span class="text-green-400 font-bold">${timeStr}</span> (已抓取 Google Sheet)`;
+                    }
+                    const syncBadge = document.getElementById('staff-sync-badge');
+                    if (syncBadge) {
+                        syncBadge.className = "text-[10px] bg-green-950/80 text-green-400 border border-green-800 px-2 py-0.5 rounded-full flex items-center gap-1";
+                        syncBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-ping"></span> 實時更新中`;
+                    }
                     return true;
                 }
             } catch (e) {
                 console.error("Cloud pull failed:", e);
+                const syncBadge = document.getElementById('staff-sync-badge');
+                if (syncBadge) {
+                    syncBadge.className = "text-[10px] bg-red-950/80 text-red-400 border border-red-800 px-2 py-0.5 rounded-full flex items-center gap-1";
+                    syncBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> 連線中斷`;
+                }
             }
             return false;
         }
