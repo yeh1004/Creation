@@ -2271,24 +2271,15 @@
                 window.scrollTo(0, 0); // 切換畫面時自動捲動至頂部
                 
                 if (screenId === 'screen-staff-dashboard') {
-                    // 顯示雲端載入中動畫，給工作人員最即時、透明的連線反饋！
-                    const tbody = document.getElementById('staff-ranking-table-body');
-                    if (tbody) {
-                        tbody.innerHTML = `
-                            <tr>
-                                <td colspan="9" class="py-12 text-center text-slate-500 font-mono">
-                                    <div class="flex flex-col items-center justify-center gap-3">
-                                        <i data-lucide="loader" class="w-8 h-8 animate-spin text-yellow-500"></i>
-                                        <span class="text-sm font-bold text-yellow-500/90">📡 正在從 Google 試算表載入最新實時排行數據...</span>
-                                        <span class="text-[10px] text-gray-500">正在建立與 Google Apps Script API 的安全連線</span>
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-                        if (typeof lucide !== 'undefined') lucide.createIcons();
-                    }
+                    // 即時抓取本機當下資料並瞬間渲染，無需等待/依靠 Google Sheets 即可查閱！
+                    updateStaffDashboard();
                     
-                    updateStaffDashboard(true); // 傳入 true 表示跳過表格渲染，保留外部自定義的載入動畫
+                    // 背景靜默啟動雲端同步，絕不阻塞或閃爍畫面
+                    const syncBadge = document.getElementById('staff-sync-badge');
+                    if (syncBadge) {
+                        syncBadge.className = "text-[10px] bg-yellow-950/80 text-yellow-500 border border-yellow-800 px-2 py-0.5 rounded-full flex items-center gap-1";
+                        syncBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-ping"></span> 📡 正在連線同步雲端數據...`;
+                    }
                     
                     syncProgressFromCloud().then(() => {
                         updateStaffDashboard();
@@ -2297,9 +2288,10 @@
                     
                     let tickCount = 0;
                     staffDashboardInterval = setInterval(() => {
+                        // 穩定即時累加秒數計時，維持高流暢度的倒數/計時畫面
                         updateStaffDashboard();
                         tickCount++;
-                        if (tickCount % 10 === 0) { // 每 15 秒 (10 * 1.5秒) 自動從雲端同步一次所有小隊排行與模式 (符合工作人員即時監控需求)
+                        if (tickCount % 10 === 0) { // 每 15 秒 (10 * 1.5秒) 自動在背景從雲端同步一次所有小隊排行與模式
                             syncProgressFromCloud().then(() => updateStaffDashboard());
                             syncExplorationModeFromCloud();
                         }
@@ -4609,7 +4601,7 @@
             }
         };
 
-        function updateStaffDashboard(skipTableRender = false) {
+        function updateStaffDashboard() {
             const raw = document.getElementById('staff-raw-status');
             if (raw) {
                 raw.innerText = JSON.stringify({
@@ -4623,8 +4615,6 @@
                     探索模式設定: explorationMode
                 }, null, 4);
             }
-            
-            if (skipTableRender) return; // 跳過表格渲染，保留外部自定義的載入動畫
             
             // 渲染中控平台全隊伍監控表
             const tbody = document.getElementById('staff-ranking-table-body');
@@ -4791,6 +4781,98 @@
             }
         }
 
+        // ---------------------------------------------------
+        // 4.1.4 新增：強大且高容錯的雲端數據雙向相容與正規化函數
+        // ---------------------------------------------------
+        function normalizeCloudTeam(t) {
+            if (!t) return null;
+            
+            // 1. 隊伍名稱相容（解決 trailing space/欄位標籤與 Emojis 如 "隊伍名稱 " "隊伍名稱 👤" 的問題）
+            let name = t.name || t["隊伍名稱"] || t["隊伍名稱 "] || t["隊伍名稱 👤"];
+            if (name === undefined || name === null) return null;
+            name = name.toString().trim();
+            if (name === "" || name === "undefined" || name === "null") return null;
+            
+            // 2. 任務狀態相容（解決 simplified 標題如 "任務一" "任務二" 與詳細標題 "任務一：迷失的座標 🧭" 的相容性）
+            let questStatus = {};
+            if (t.questStatus && Object.keys(t.questStatus).length > 0) {
+                for (let q = 1; q <= 5; q++) {
+                    questStatus[q] = !!t.questStatus[q];
+                }
+            } else {
+                questStatus[1] = t["任務一"] === true || t["任務一"] === "true" || t["任務一：迷失的座標 🧭"] === true || t["任務一：迷失的座標 🧭"] === "true";
+                questStatus[2] = t["任務二"] === true || t["任務二"] === "true" || t["任務二：物資精算師 🎒"] === true || t["任務二：物資精算師 🎒"] === "true";
+                questStatus[3] = t["任務三"] === true || t["任務三"] === "true" || t["任務三：血色救援行動 🩹"] === true || t["任務三：血色救援行動 🩹"] === "true";
+                questStatus[4] = t["任務四"] === true || t["任務四"] === "true" || t["任務四：真相的迷霧 🔍"] === true || t["任務四：真相的迷霧 🔍"] === "true";
+                questStatus[5] = t["任務五"] === true || t["任務五"] === "true" || t["任務五：重啟神盾防線 🛡️"] === true || t["任務五：重啟神盾防線 🛡️"] === "true";
+            }
+            
+            // 3. 失敗次數相容
+            let failureCount = 0;
+            if (t.failureCount !== undefined) failureCount = Number(t.failureCount) || 0;
+            else if (t["累計失敗次數"] !== undefined) failureCount = Number(t["累計失敗次數"]) || 0;
+            else if (t["累計失敗次數 ❌"] !== undefined) failureCount = Number(t["累計失敗次數 ❌"]) || 0;
+            
+            // 4. 當前消耗秒數相容
+            let elapsedSeconds = 0;
+            if (t.elapsedSeconds !== undefined) elapsedSeconds = Number(t.elapsedSeconds) || 0;
+            else if (t["當前消耗秒數"] !== undefined) elapsedSeconds = Number(t["當前消耗秒數"]) || 0;
+            else if (t["當前消耗秒數 ⏱️"] !== undefined) elapsedSeconds = Number(t["當前消耗秒數 ⏱️"]) || 0;
+            
+            // 5. 是否已破關相容
+            let gameCleared = false;
+            if (t.gameCleared !== undefined) gameCleared = t.gameCleared === true || t.gameCleared === "true";
+            else if (t["是否已破關"] !== undefined) gameCleared = t["是否已破關"] === true || t["是否已破關"] === "true";
+            else if (t["是否已破關 "] !== undefined) gameCleared = t["是否已破關 "] === true || t["是否已破關 "] === "true";
+            else if (t["是否已破關 🏆"] !== undefined) gameCleared = t["是否已破關 🏆"] === true || t["是否已破關 🏆"] === "true";
+            
+            // 6. 挑戰次數相容
+            let playCount = 0;
+            if (t.playCount !== undefined) playCount = Number(t.playCount) || 0;
+            else if (t["挑戰次數"] !== undefined) playCount = Number(t["挑戰次數"]) || 0;
+            else if (t["挑戰次數 "] !== undefined) playCount = Number(t["挑戰次數 "]) || 0;
+            else if (t["挑戰次數 🔄"] !== undefined) playCount = Number(t["挑戰次數 🔄"]) || 0;
+            
+            // 7. 首次通關秒數相容
+            let firstElapsedSeconds = null;
+            let fesVal = t.firstElapsedSeconds !== undefined ? t.firstElapsedSeconds : (t["首次通關秒數"] !== undefined ? t["首次通關秒數"] : t["首次通關秒數 ⏱️"]);
+            if (fesVal !== undefined && fesVal !== null && fesVal !== "") firstElapsedSeconds = Number(fesVal);
+            
+            // 8. 首次通關失敗次數相容
+            let firstFailureCount = null;
+            let ffcVal = t.firstFailureCount !== undefined ? t.firstFailureCount : (t["首次通關失敗次數"] !== undefined ? t["首次通關失敗次數"] : (t["首次通關失敗次數 "] !== undefined ? t["首次通關失敗次數 "] : t["首次通關失敗次數 ❌"]));
+            if (ffcVal !== undefined && ffcVal !== null && ffcVal !== "") firstFailureCount = Number(ffcVal);
+            
+            // 9. 稱號相容
+            let firstTitle = t.firstTitle || t["首次榮譽稱號"] || t["首次榮譽稱號 🎖️"] || "";
+            let title = t.title || t["當前榮譽稱號"] || t["當前榮譽稱號 "] || t["當前榮譽稱號 🎖️"] || "";
+            
+            // 10. 開始時間與結束時間補齊（如果缺 startTime 但有 elapsedSeconds，自動回推以保持倒數計時流暢穩定）
+            let startTime = t.startTime ? Number(t.startTime) : null;
+            let endTime = t.endTime ? Number(t.endTime) : null;
+            if (!startTime) {
+                startTime = Date.now() - elapsedSeconds * 1000;
+            }
+            if (gameCleared && !endTime) {
+                endTime = startTime + elapsedSeconds * 1000;
+            }
+            
+            return {
+                name: name,
+                questStatus: questStatus,
+                failureCount: failureCount,
+                elapsedSeconds: elapsedSeconds,
+                gameCleared: gameCleared,
+                playCount: playCount,
+                firstElapsedSeconds: firstElapsedSeconds,
+                firstFailureCount: firstFailureCount,
+                firstTitle: firstTitle,
+                title: title,
+                startTime: startTime,
+                endTime: endTime
+            };
+        }
+
         async function syncProgressFromCloud() {
             try {
                 let url = CLOUD_DB_URL;
@@ -4800,6 +4882,13 @@
                     url += "?_t=" + Date.now();
                 }
                 
+                // 開始背景同步時更新狀態標誌
+                const syncBadge = document.getElementById('staff-sync-badge');
+                if (syncBadge && activeScreen === 'screen-staff-dashboard') {
+                    syncBadge.className = "text-[10px] bg-yellow-950/80 text-yellow-500 border border-yellow-800 px-2 py-0.5 rounded-full flex items-center gap-1";
+                    syncBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-ping"></span> 雲端同步中...`;
+                }
+
                 let response = await fetch(url, { cache: 'no-store' });
                 if (response.ok) {
                     let cloudTeams = [];
@@ -4807,32 +4896,65 @@
                         cloudTeams = await response.json() || [];
                     } catch(e) { cloudTeams = []; }
                     
-                    cloudTeams = cloudTeams.filter(t => t && t.name && t.name !== "undefined" && t.name !== "null" && t.name.trim() !== "");
-                    
+                    // 執行強大的雙向屬性正規化，相容所有 simplified/trailing-space 中文欄位標籤
+                    cloudTeams = cloudTeams.map(normalizeCloudTeam).filter(Boolean);
+
                     let localTeams = JSON.parse(localStorage.getItem('trump_mission_teams')) || [];
                     localTeams = localTeams.filter(t => t && t.name && t.name !== "undefined" && t.name !== "null" && t.name.trim() !== "");
                     
-                    // 雲端數據為絕對真理 (Source of Truth)
-                    let merged = [...cloudTeams];
+                    // 轉為乾淨的數字格式
+                    localTeams.forEach(l => {
+                        if (l.startTime) l.startTime = Number(l.startTime);
+                        if (l.endTime) l.endTime = Number(l.endTime);
+                        if (l.elapsedSeconds !== undefined) l.elapsedSeconds = Number(l.elapsedSeconds);
+                        if (l.failureCount !== undefined) l.failureCount = Number(l.failureCount);
+                        if (l.playCount !== undefined) l.playCount = Number(l.playCount);
+                        if (l.firstElapsedSeconds !== undefined && l.firstElapsedSeconds !== null) l.firstElapsedSeconds = Number(l.firstElapsedSeconds);
+                        if (l.firstFailureCount !== undefined && l.firstFailureCount !== null) l.firstFailureCount = Number(l.firstFailureCount);
+                    });
+
+                    // 使用 Map 做雙向精準合併，絕不遺漏任何本機或雲端的小隊數據，徹底解決「消失及出現」的閃爍問題！
+                    const cloudMap = new Map();
+                    cloudTeams.forEach(c => {
+                        cloudMap.set(c.name.trim().toLowerCase(), c);
+                    });
+
+                    let merged = [];
                     
-                    // 若有本地活躍小隊且非處於工作人員中控模式下，則保護其本機進度防覆蓋
-                    if (teamName && activeScreen !== 'screen-staff-dashboard') {
-                        let myLocalTeam = localTeams.find(t => t.name === teamName);
-                        if (myLocalTeam) {
-                            let cloudTeamIdx = merged.findIndex(t => t.name === teamName);
-                            if (cloudTeamIdx > -1) {
-                                let myCloudTeam = merged[cloudTeamIdx];
-                                let localDone = Object.values(myLocalTeam.questStatus || {}).filter(Boolean).length;
-                                let cloudDone = Object.values(myCloudTeam.questStatus || {}).filter(Boolean).length;
-                                
-                                if (localDone > cloudDone) {
-                                    merged[cloudTeamIdx] = myLocalTeam;
-                                }
+                    // 1. 處理本機既有小隊與雲端重疊的更新
+                    localTeams.forEach(l => {
+                        const nameKey = l.name.trim().toLowerCase();
+                        if (cloudMap.has(nameKey)) {
+                            const c = cloudMap.get(nameKey);
+                            
+                            // 計算破關任務數
+                            const lDone = Object.values(l.questStatus || {}).filter(Boolean).length;
+                            const cDone = Object.values(c.questStatus || {}).filter(Boolean).length;
+                            
+                            // 進度分數演算法：已解關卡數 + 通關加權 + 重複挑戰加權
+                            const lScore = lDone + (l.gameCleared ? 10 : 0) + (l.playCount || 0) * 100;
+                            const cScore = cDone + (c.gameCleared ? 10 : 0) + (c.playCount || 0) * 100;
+                            
+                            let selected;
+                            if (teamName && nameKey === teamName.trim().toLowerCase()) {
+                                // 當前平板活躍小隊：保護玩家不受舊雲端覆蓋，取分數最高者，平手則保留本機最新進度與秒數
+                                selected = lScore >= cScore ? l : c;
                             } else {
-                                merged.push(myLocalTeam);
+                                // 其他平板小隊：取進度更完整/更新的資料
+                                selected = lScore >= cScore ? l : c;
                             }
+                            merged.push(selected);
+                            cloudMap.delete(nameKey); // 移除已處理的小隊
+                        } else {
+                            // 本機特有小隊（離線登入或剛好沒同步成功的隊伍），百分之百保留！
+                            merged.push(l);
                         }
-                    }
+                    });
+
+                    // 2. 補上雲端有但本機沒有的其他小隊數據 (來自其他平板的同步進度)
+                    cloudMap.forEach(c => {
+                        merged.push(c);
+                    });
                     
                     localStorage.setItem('trump_mission_teams', JSON.stringify(merged));
                     
@@ -4841,9 +4963,8 @@
                     if (lastSyncEl) {
                         const now = new Date();
                         const timeStr = now.toTimeString().split(' ')[0];
-                        lastSyncEl.innerHTML = `最後同步時間：<span class="text-green-400 font-bold">${timeStr}</span> (已抓取 Google Sheet)`;
+                        lastSyncEl.innerHTML = `最後同步時間：<span class="text-green-400 font-bold">${timeStr}</span> (已對齊雲端數據)`;
                     }
-                    const syncBadge = document.getElementById('staff-sync-badge');
                     if (syncBadge) {
                         syncBadge.className = "text-[10px] bg-green-950/80 text-green-400 border border-green-800 px-2 py-0.5 rounded-full flex items-center gap-1";
                         syncBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-ping"></span> 實時更新中`;
@@ -4855,7 +4976,11 @@
                 const syncBadge = document.getElementById('staff-sync-badge');
                 if (syncBadge) {
                     syncBadge.className = "text-[10px] bg-red-950/80 text-red-400 border border-red-800 px-2 py-0.5 rounded-full flex items-center gap-1";
-                    syncBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> 連線中斷`;
+                    syncBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> 連線中斷 (本機即時數據)`;
+                }
+                const lastSyncEl = document.getElementById('staff-last-sync');
+                if (lastSyncEl) {
+                    lastSyncEl.innerHTML = `最後同步時間：<span class="text-red-400 font-bold">連線失敗</span> (顯示本機即時數據)`;
                 }
             }
             return false;
@@ -4921,6 +5046,9 @@
                     try {
                         cloudTeams = await response.json() || [];
                     } catch(e) { cloudTeams = []; }
+                    
+                    // 新增：強大的雙向相容屬性標準化，確保玩家端的搜尋也能解析中文與帶空白欄位
+                    cloudTeams = cloudTeams.map(normalizeCloudTeam).filter(Boolean);
                     
                     let cloudTeam = cloudTeams.find(t => t.name === teamName);
                     if (cloudTeam) {
@@ -5085,6 +5213,10 @@
                 if (t.firstFailureCount === undefined) t.firstFailureCount = null;
                 if (t.firstTitle === undefined) t.firstTitle = "";
                 if (t.playCount === undefined) t.playCount = 0;
+                // 超級防禦性安全機制：確保所有排名的時間、消耗秒數、失敗次數均為乾淨數值，杜絕 NaN / 閃爍問題
+                if (t.startTime) t.startTime = Number(t.startTime) || Date.now();
+                if (t.elapsedSeconds !== undefined) t.elapsedSeconds = Number(t.elapsedSeconds) || 0;
+                if (t.failureCount !== undefined) t.failureCount = Number(t.failureCount) || 0;
             });
             
             teams.sort((a, b) => {
