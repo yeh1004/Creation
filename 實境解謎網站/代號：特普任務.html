@@ -4626,12 +4626,32 @@
                     return; // 狀態未實質改變，直接跳過網路請求以防競態與資源浪費
                 }
                 
-                let response = await fetch(GAS_BACKEND_URL + "?action=updateSingleTeam", {
-                    method: 'POST',
-                    body: JSON.stringify(myTeam)
-                });
-                if (response.ok) {
-                    lastSyncedState = stateStr;
+                let success = false;
+                try {
+                    let response = await fetch(GAS_BACKEND_URL + "?action=updateSingleTeam", {
+                        method: 'POST',
+                        body: JSON.stringify(myTeam)
+                    });
+                    if (response.ok) {
+                        let resData = await response.json();
+                        if (resData && !resData.error) {
+                            lastSyncedState = stateStr;
+                            success = true;
+                        }
+                    }
+                } catch(e) {
+                    console.warn("Single team update failed, will fallback to legacy batch update:", e);
+                }
+                
+                // 降級相容機制：如果用戶尚未更新 Apps Script (不支援 updateSingleTeam)，則降級使用舊版 updateTeams 全量同步
+                if (!success) {
+                    let response = await fetch(GAS_BACKEND_URL + "?action=updateTeams", {
+                        method: 'POST',
+                        body: JSON.stringify(localTeams)
+                    });
+                    if (response.ok) {
+                        lastSyncedState = stateStr;
+                    }
                 }
                 
                 await syncProgressFromCloud();
