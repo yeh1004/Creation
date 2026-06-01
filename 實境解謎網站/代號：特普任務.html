@@ -81,29 +81,49 @@
             box-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
         }
         .keypad-btn {
-            background: linear-gradient(135deg, #21262d 0%, #161b22 100%);
-            border: 1px solid #30363d;
-            box-shadow: 0 4px 0 #0d1117, inset 0 1px 0 rgba(255,255,255,0.1);
-            color: #c9d1d9;
-            transition: all 0.1s ease;
+            background: rgba(33, 38, 45, 0.4) !important;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(240, 180, 50, 0.2) !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+            color: #f0e6d2 !important;
+            transition: all 0.15s ease;
+            text-shadow: 0 0 5px rgba(240, 180, 50, 0.3);
+        }
+        .keypad-btn:hover {
+            background: rgba(240, 180, 50, 0.15) !important;
+            border-color: rgba(240, 180, 50, 0.6) !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 20px rgba(240, 180, 50, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+            text-shadow: 0 0 8px rgba(240, 180, 50, 0.6);
         }
         .keypad-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 0 0 #0d1117;
+            transform: translateY(2px);
+            background: rgba(240, 180, 50, 0.25) !important;
+            box-shadow: 0 2px 10px rgba(240, 180, 50, 0.4) !important;
         }
         .keypad-btn.action-btn {
-            background: linear-gradient(135deg, #1f6feb 0%, #104eab 100%);
-            border-color: #388bfd;
-            color: white;
-            text-shadow: 0 0 5px rgba(255,255,255,0.5);
+            background: rgba(31, 111, 235, 0.4) !important;
+            border-color: rgba(56, 139, 253, 0.4) !important;
+            color: #e6f1ff !important;
+            text-shadow: 0 0 5px rgba(56, 139, 253, 0.5);
         }
         .keypad-btn.action-btn:hover {
-            background: linear-gradient(135deg, #388bfd 0%, #1f6feb 100%);
+            background: rgba(31, 111, 235, 0.7) !important;
+            border-color: rgba(56, 139, 253, 0.8) !important;
+            color: white !important;
+            box-shadow: 0 4px 20px rgba(56, 139, 253, 0.5) !important;
         }
         .keypad-btn.clear-btn {
-            background: linear-gradient(135deg, #da3633 0%, #a01d1a 100%);
-            border-color: #f85149;
-            color: white;
+            background: rgba(218, 54, 51, 0.3) !important;
+            border-color: rgba(248, 81, 73, 0.4) !important;
+            color: #ffebe9 !important;
+        }
+        .keypad-btn.clear-btn:hover {
+            background: rgba(218, 54, 51, 0.6) !important;
+            border-color: rgba(248, 81, 73, 0.8) !important;
+            color: white !important;
+            box-shadow: 0 4px 20px rgba(248, 81, 73, 0.5) !important;
         }
 
         /* 黃色電池特效 */
@@ -1867,31 +1887,53 @@
 
     <!-- ✨ 任務二終極太空機械風密碼鎖解鎖彈窗 -->
     <div id="terminal-modal" class="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
-        <div class="tech-bg w-full max-w-md rounded-3xl p-6 border-2 border-slate-700 shadow-2xl flex flex-col justify-between overflow-hidden">
+        <div class="tech-bg w-full max-w-md rounded-3xl p-6 border-2 border-slate-700 shadow-2xl flex flex-col justify-between overflow-hidden relative">
             <div class="text-center mb-3 border-b border-slate-800 pb-2">
                 <span class="text-3xl text-amber-500 font-bold">📟</span>
-                <h3 class="tech-font font-bold text-amber-500 text-base tracking-wider mt-1">物資箱緊急終端控制系統</h3>
-                <p class="text-[9px] text-slate-500 uppercase tracking-widest">主機室逃生安全鎖定協議</p>
+                <h3 class="tech-font font-bold text-amber-500 text-base tracking-wider mt-1">緊急安全驗證終端系統</h3>
+                <p class="text-[9px] text-slate-500 uppercase tracking-widest">主機箱防護鎖安全通訊協定</p>
+            </div>
+
+            <!-- 30秒倒數計時器 -->
+            <div id="q2-timer-container">
+                <!-- 由 JS 動態繪製與管理樣式 -->
             </div>
 
             <div class="mb-4">
                 <div class="bg-[#161b22] border border-slate-800 p-3 rounded-2xl text-center overflow-hidden">
-                    <p class="text-[10px] text-slate-400 mb-2 tracking-wide">請利用下方虛擬鍵盤填入通關密語中對應的數字</p>
-                    <div class="text-[11px] sm:text-xs text-slate-200 leading-relaxed flex flex-col sm:flex-row flex-wrap justify-center items-center gap-x-1 gap-y-2 font-semibold">
-                        <div class="flex items-center">
-                            <span>非需之物『</span>
-                            <div id="slot-0" onclick="focusSlot(0)" class="tech-input-box w-7 h-7 rounded flex items-center justify-center mx-0.5 text-base font-bold cursor-pointer transition active">_</div>
-                            <span>』容忍，</span>
+                    <p class="text-[10px] text-slate-400 mb-2 tracking-wide">請利用虛擬鍵盤輸入 8 位數安全協議代碼進行解鎖</p>
+                    
+                    <div class="flex flex-col items-center gap-2">
+                        <div class="flex justify-center items-center gap-1 font-mono">
+                            <!-- 避難場所 -->
+                            <div class="flex items-center gap-0.5 px-1 py-1 rounded bg-slate-900 border border-slate-800/60">
+                                <div id="slot-0" onclick="focusSlot(0)" class="tech-input-box w-7 h-7 rounded flex items-center justify-center text-sm font-bold cursor-pointer transition active">_</div>
+                                <div id="slot-1" onclick="focusSlot(1)" class="tech-input-box w-7 h-7 rounded flex items-center justify-center text-sm font-bold cursor-pointer transition">_</div>
+                            </div>
+                            <span class="text-slate-600 font-bold">-</span>
+                            <!-- 消防栓 -->
+                            <div class="flex items-center gap-0.5 px-1 py-1 rounded bg-slate-900 border border-slate-800/60">
+                                <div id="slot-2" onclick="focusSlot(2)" class="tech-input-box w-7 h-7 rounded flex items-center justify-center text-sm font-bold cursor-pointer transition">_</div>
+                                <div id="slot-3" onclick="focusSlot(3)" class="tech-input-box w-7 h-7 rounded flex items-center justify-center text-sm font-bold cursor-pointer transition">_</div>
+                            </div>
+                            <span class="text-slate-600 font-bold">-</span>
+                            <!-- AED -->
+                            <div class="flex items-center gap-0.5 px-1 py-1 rounded bg-slate-900 border border-slate-800/60">
+                                <div id="slot-4" onclick="focusSlot(4)" class="tech-input-box w-7 h-7 rounded flex items-center justify-center text-sm font-bold cursor-pointer transition">_</div>
+                                <div id="slot-5" onclick="focusSlot(5)" class="tech-input-box w-7 h-7 rounded flex items-center justify-center text-sm font-bold cursor-pointer transition">_</div>
+                            </div>
+                            <span class="text-slate-600 font-bold">-</span>
+                            <!-- 避難指示牌 -->
+                            <div class="flex items-center gap-0.5 px-1 py-1 rounded bg-slate-900 border border-slate-800/60">
+                                <div id="slot-6" onclick="focusSlot(6)" class="tech-input-box w-7 h-7 rounded flex items-center justify-center text-sm font-bold cursor-pointer transition">_</div>
+                                <div id="slot-7" onclick="focusSlot(7)" class="tech-input-box w-7 h-7 rounded flex items-center justify-center text-sm font-bold cursor-pointer transition">_</div>
+                            </div>
                         </div>
-                        <div class="flex items-center">
-                            <span>生存必備『</span>
-                            <div id="slot-1" onclick="focusSlot(1)" class="tech-input-box w-7 h-7 rounded flex items-center justify-center mx-0.5 text-base font-bold cursor-pointer transition">_</div>
-                            <span>』要素，</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span>背負重量『</span>
-                            <div id="slot-2" onclick="focusSlot(2)" class="tech-input-box w-7 h-7 rounded flex items-center justify-center mx-0.5 text-base font-bold cursor-pointer transition">_</div>
-                            <span>』超標</span>
+                        <div class="flex justify-between w-full px-2 text-[9px] text-slate-500 font-bold font-mono">
+                            <span class="w-[50px] text-center">避難場所</span>
+                            <span class="w-[50px] text-center">消防栓</span>
+                            <span class="w-[50px] text-center">AED</span>
+                            <span class="w-[60px] text-center">避難指示牌</span>
                         </div>
                     </div>
                 </div>
@@ -1920,7 +1962,12 @@
                     <span class="text-[9px] transition-transform duration-300 group-open:rotate-180">▼</span>
                 </summary>
                 <div class="mt-2 text-xs text-slate-300 pl-3 border-l-2 border-amber-500 font-bold leading-relaxed">
-                    線索在上一頁喔!
+                    請尋找地圖上的安全防護元件數量：<br>
+                    • 避難場所有 2 處<br>
+                    • 消防栓有 12 處<br>
+                    • AED有 4 處<br>
+                    • 避難指示牌有 8 處<br>
+                    依此順序填入雙位數格式 (例如 2 處寫為 02)，依序拼組出 8 位數協議代碼。
                 </div>
             </details>
 
@@ -3360,8 +3407,8 @@
 
         // 終端鎖解鎖設定
         let currentActiveSlot = 0;
-        let slotsValue = ["_", "_", "_"];
-        const correctPassword = ["0", "3", "0"];
+        let slotsValue = ["_", "_", "_", "_", "_", "_", "_", "_"];
+        const correctPassword = ["0", "2", "1", "2", "0", "4", "0", "8"];
 
         function initQuest2() {
             if (questStatus[2]) {
@@ -3633,26 +3680,72 @@
         }
 
         // ================= ✨ 終極太空機械風解鎖程序 =================
+        let q2_timerInterval = null;
+        let q2_timeLeft = 300;
+
         function openTerminalModal() {
             playSound('click');
             closeModal();
             document.getElementById('terminal-modal').style.display = 'flex';
+            
+            const timerContainer = document.getElementById('q2-timer-container');
+            
             if (questStatus[2]) {
-                slotsValue = ["0", "3", "0"];
+                slotsValue = [...correctPassword];
                 currentActiveSlot = 0;
                 updateSlotsUI();
+                if (timerContainer) {
+                    timerContainer.innerHTML = `
+                        <span class="text-[10px] text-emerald-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"></span> ⚠️ 通訊連線已建立 • 安全存取授權完成
+                        </span>
+                        <span class="font-mono font-bold text-emerald-400 text-sm tracking-wider select-none">AUTHORIZED</span>
+                    `;
+                    timerContainer.className = "mb-3 px-4 py-2 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 flex justify-between items-center shadow-[0_0_15px_rgba(16,185,129,0.15)]";
+                }
             } else {
                 resetSlots();
+                if (timerContainer) {
+                    timerContainer.innerHTML = `
+                        <span class="text-[10px] text-red-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span> ⚠️ 密碼鎖自我防禦協定：連線即將中斷
+                        </span>
+                        <span id="q2-countdown" class="font-mono font-bold text-red-500 text-xl tracking-wider select-none">30.0s</span>
+                    `;
+                    timerContainer.className = "mb-3 px-4 py-2 rounded-2xl bg-red-950/40 border border-red-500/30 flex justify-between items-center shadow-[0_0_15px_rgba(239,68,68,0.15)] animate-pulse";
+                }
+                
+                // 啟動精度倒數計時器 (每 100ms 刷新一次)
+                if (q2_timerInterval) clearInterval(q2_timerInterval);
+                q2_timeLeft = 300;
+                q2_timerInterval = setInterval(() => {
+                    if (questStatus[2]) {
+                        clearInterval(q2_timerInterval);
+                        return;
+                    }
+                    q2_timeLeft--;
+                    if (q2_timeLeft <= 0) {
+                        q2_timeLeft = 0;
+                        clearInterval(q2_timerInterval);
+                        const cdEl = document.getElementById('q2-countdown');
+                        if (cdEl) cdEl.innerText = "0.0s";
+                        quest2_fail();
+                    } else {
+                        const cdEl = document.getElementById('q2-countdown');
+                        if (cdEl) cdEl.innerText = (q2_timeLeft / 10).toFixed(1) + "s";
+                    }
+                }, 100);
             }
         }
 
         function closeTerminalModal() {
             playSound('click');
+            if (q2_timerInterval) clearInterval(q2_timerInterval);
             document.getElementById('terminal-modal').style.display = 'none';
         }
 
         function resetSlots() {
-            slotsValue = ["_", "_", "_"];
+            slotsValue = ["_", "_", "_", "_", "_", "_", "_", "_"];
             currentActiveSlot = 0;
             updateSlotsUI();
         }
@@ -3665,13 +3758,15 @@
         }
 
         function updateSlotsUI() {
-            for (let i = 0; i < 3; i++) {
+            for (let i = 0; i < 8; i++) {
                 const slotEl = document.getElementById(`slot-${i}`);
-                slotEl.innerText = slotsValue[i];
-                if (i === currentActiveSlot) {
-                    slotEl.classList.add('active');
-                } else {
-                    slotEl.classList.remove('active');
+                if (slotEl) {
+                    slotEl.innerText = slotsValue[i];
+                    if (i === currentActiveSlot) {
+                        slotEl.classList.add('active');
+                    } else {
+                        slotEl.classList.remove('active');
+                    }
                 }
             }
         }
@@ -3686,7 +3781,7 @@
             }
             playSound('click');
             slotsValue[currentActiveSlot] = num;
-            if (currentActiveSlot < 2) {
+            if (currentActiveSlot < 7) {
                 currentActiveSlot++;
             }
             updateSlotsUI();
@@ -3716,7 +3811,7 @@
                 return;
             }
             let matches = true;
-            for (let i = 0; i < 3; i++) {
+            for (let i = 0; i < 8; i++) {
                 if (slotsValue[i] !== correctPassword[i]) {
                     matches = false;
                     break;
@@ -3724,14 +3819,27 @@
             }
 
             if (matches) {
+                if (q2_timerInterval) clearInterval(q2_timerInterval);
                 playSound('success');
                 closeTerminalModal();
                 document.getElementById('unlock-success-modal').style.display = 'flex';
             } else {
                 playSound('fail');
-                showToast("🚨 通關密語數字解碼錯誤！主機鎖定中，請重新輸入。", "fail");
+                showToast("🚨 安全通訊協定代碼不正確！終端已被暫時封鎖，請重新輸入。", "fail");
                 resetSlots();
             }
+        }
+
+        function quest2_fail() {
+            playSound('fail');
+            failureCount++;
+            const fDisplay = document.getElementById('failure-display');
+            if (fDisplay) fDisplay.innerText = failureCount;
+            updateStats();
+            saveCurrentTeamProgress(); // 將失敗次數寫入本機並即時同步至雲端 API
+            showToast("🚨 時間到！終端機安全性重置，解鎖程序失敗！", "fail");
+            closeTerminalModal();
+            resetSlots();
         }
 
         function closeUnlockSuccessModal() {
