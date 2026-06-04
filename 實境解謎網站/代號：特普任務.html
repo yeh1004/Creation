@@ -281,13 +281,19 @@
                 <i data-lucide="shield-alert" class="w-6 h-6 text-green-500 animate-pulse"></i>
                 <span class="font-bold tracking-wider text-green-400 text-sm md:text-base">代號：特普任務</span>
             </div>
-            <div id="team-badge" class="hidden bg-green-950/50 border border-green-500/30 px-3 py-1 rounded-full text-xs text-green-400">
-                <i data-lucide="users" class="w-3.5 h-3.5 inline mr-1"></i> <span id="display-team-name">未登入</span>
+            <div class="flex items-center space-x-2 md:space-x-3">
+                <div id="team-badge" class="hidden bg-green-950/50 border border-green-500/30 px-3 py-1 rounded-full text-xs text-green-400">
+                    <i data-lucide="users" class="w-3.5 h-3.5 inline mr-1"></i> <span id="display-team-name">未登入</span>
+                </div>
+                <button id="header-home-btn" onclick="triggerResetGameSameTeam()" style="display: none;" class="text-xs text-rose-400 hover:text-white transition-colors flex items-center space-x-1 border border-rose-900/40 hover:border-rose-700 px-2.5 py-1 rounded-md bg-rose-950/20 shadow-sm">
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                    <span>重置遊戲</span>
+                </button>
+                <button id="fullscreen-btn" onclick="toggleFullscreen()" class="text-xs text-green-400 hover:text-white transition-colors flex items-center space-x-1 border border-green-900/40 hover:border-green-700 px-2.5 py-1 rounded-md bg-green-950/20 shadow-sm cursor-pointer">
+                    <i data-lucide="maximize" class="w-3.5 h-3.5" id="fullscreen-icon"></i>
+                    <span id="fullscreen-text">全螢幕模式</span>
+                </button>
             </div>
-            <button id="header-home-btn" onclick="triggerResetGameSameTeam()" style="display: none;" class="text-xs text-rose-400 hover:text-white transition-colors flex items-center space-x-1 border border-rose-900/40 hover:border-rose-700 px-2.5 py-1 rounded-md bg-rose-950/20 shadow-sm">
-                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                <span>重置遊戲</span>
-            </button>
         </div>
     </header>
 
@@ -5185,8 +5191,11 @@
                             merged.push(selected);
                             cloudMap.delete(nameKey); // 移除已處理的小隊
                         } else {
-                            // 本機特有小隊（離線登入或剛好沒同步成功的隊伍），百分之百保留！
-                            merged.push(l);
+                            // 本機特有小隊（離線登入或剛好沒同步成功的隊伍）：
+                            // 若是當前活躍玩家小隊則必須保留以防影響遊戲，其餘非活躍小隊若雲端已無資料則不保留，隨時同步雲端刪除與清空狀態！
+                            if (teamName && nameKey === teamName.trim().toLowerCase()) {
+                                merged.push(l);
+                            }
                         }
                     });
 
@@ -5727,6 +5736,57 @@
             // 同步探索模式到雲端
             syncExplorationModeToCloud(mode);
         }
+
+        // ---------------------------------------------------
+        // 全螢幕模式切換與狀態處理
+        // ---------------------------------------------------
+        function toggleFullscreen() {
+            playSound('click');
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                const docEl = document.documentElement;
+                if (docEl.requestFullscreen) {
+                    docEl.requestFullscreen().catch(err => {
+                        showToast(`無法切換至全螢幕模式: ${err.message}`, "fail");
+                    });
+                } else if (docEl.webkitRequestFullscreen) {
+                    docEl.webkitRequestFullscreen();
+                } else {
+                    showToast("此瀏覽器不支援全螢幕模式！", "fail");
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+            }
+        }
+
+        const handleFullscreenChange = () => {
+            const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement;
+            const icon = document.getElementById('fullscreen-icon');
+            const text = document.getElementById('fullscreen-text');
+            const btn = document.getElementById('fullscreen-btn');
+            if (isFullscreen) {
+                if (icon) icon.setAttribute('data-lucide', 'minimize');
+                if (text) text.innerText = '離開全螢幕';
+                if (btn) {
+                    btn.classList.remove('text-green-400', 'bg-green-950/20', 'border-green-900/40', 'hover:border-green-700');
+                    btn.classList.add('text-yellow-400', 'bg-yellow-950/20', 'border-yellow-900/40', 'hover:border-yellow-700');
+                }
+            } else {
+                if (icon) icon.setAttribute('data-lucide', 'maximize');
+                if (text) text.innerText = '全螢幕模式';
+                if (btn) {
+                    btn.classList.remove('text-yellow-400', 'bg-yellow-950/20', 'border-yellow-900/40', 'hover:border-yellow-700');
+                    btn.classList.add('text-green-400', 'bg-green-950/20', 'border-green-900/40', 'hover:border-green-700');
+                }
+            }
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        };
+
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
 
         window.onload = function() {
             if (typeof lucide !== 'undefined') {
