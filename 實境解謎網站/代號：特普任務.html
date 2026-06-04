@@ -848,6 +848,35 @@
         <!-- 7. 關卡細節頁面 -->
         <section id="screen-quest-detail" class="hidden w-full max-w-6xl bg-gray-900/90 border border-gray-800 rounded-2xl p-5 md:p-8 shadow-2xl space-y-6 relative">
             
+            <!-- 📢 安全守則宣導閘門 (quest-safety-rules-gate) -->
+            <div id="quest-safety-rules-gate" class="hidden fixed inset-x-0 bottom-0 z-[290] bg-slate-950/98 backdrop-blur-xl flex flex-col justify-center items-center p-6 transition-all duration-300">
+                <div class="text-center max-w-md space-y-6 p-4">
+                    <!-- 安全警報圖標與雷達光圈 -->
+                    <div class="relative w-20 h-20 mx-auto flex items-center justify-center">
+                        <div class="absolute inset-0 rounded-full bg-yellow-500/10 border border-yellow-500/30 animate-ping"></div>
+                        <div class="absolute inset-2 rounded-full bg-yellow-500/20 border border-yellow-500/40 animate-pulse"></div>
+                        <div class="w-14 h-14 rounded-full bg-yellow-950/80 border-2 border-yellow-400 flex items-center justify-center shadow-[0_0_20px_rgba(234,179,8,0.4)]">
+                            <i data-lucide="shield-alert" class="w-6 h-6 text-yellow-400 animate-bounce"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-1">
+                        <h3 id="safety-rules-title" class="text-lg font-black text-yellow-500 tracking-wider">📢 請聽小幫手總結本關卡的安全守則</h3>
+                        <p class="text-[9px] text-slate-500 uppercase tracking-widest font-mono">AEGIS SECURITY BRIEFING GATEWAY</p>
+                    </div>
+
+                    <p class="text-xs text-slate-400 leading-relaxed max-w-xs mx-auto">
+                        小幫手正為您講解本關卡之安全防護與避難守則，請仔細聆聽。聆聽完畢後，點選下方按鈕即可。
+                    </p>
+
+                    <div class="space-y-3 pt-2 w-full max-w-xs mx-auto">
+                        <button onclick="dismissSafetyRules()" class="w-full py-3 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-black font-black tracking-widest rounded-xl text-xs transition-all duration-300 shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_25px_rgba(234,179,8,0.5)] transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer">
+                            我已了解!
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- 📍 區域抵達安全核實閘門 (quest-arrival-gate) -->
             <div id="quest-arrival-gate" class="hidden fixed inset-x-0 bottom-0 z-[285] bg-slate-950/98 backdrop-blur-xl flex flex-col justify-center items-center p-6 transition-all duration-300">
                 <div class="text-center max-w-md space-y-6 p-4">
@@ -3043,7 +3072,7 @@
                 console.error("Failed to load questArrived", e);
             }
 
-            // 抵達核實邏輯：若未通關且未確認抵達，則鎖死畫面
+            // 抵達核實與安全宣導閘門控制：若未通關且未確認抵達，則鎖死畫面以進行抵達確認
             if (!questStatus[questId] && !questArrived[questId]) {
                 const gate = document.getElementById('quest-arrival-gate');
                 if (gate) {
@@ -3051,10 +3080,14 @@
                     document.getElementById('gate-quest-title').innerText = data.title;
                     document.getElementById('gate-quest-location').innerText = questLocations[questId] || "指定任務地點";
                 }
+                const rulesGate = document.getElementById('quest-safety-rules-gate');
+                if (rulesGate) rulesGate.classList.add('hidden');
             } else {
-                // 已通關或已確認抵達，直接隱藏閘門並進行關卡初始化
+                // 已通關或已確認抵達，直接隱藏所有閘門並進行關卡初始化
                 const gate = document.getElementById('quest-arrival-gate');
                 if (gate) gate.classList.add('hidden');
+                const rulesGate = document.getElementById('quest-safety-rules-gate');
+                if (rulesGate) rulesGate.classList.add('hidden');
                 
                 if (questId === 1) initQuest1();
                 if (questId === 2) initQuest2();
@@ -3090,17 +3123,54 @@
             adjustQuest2StatusBar();
         }
 
-        // 動態調整抵達閘門的 top 懸浮定位，確保露出頂部倒數計時 HUD
+        // 動態調整抵達閘門及安全守則閘門的 top 懸浮定位，確保露出頂部倒數計時 HUD
         function adjustQuestArrivalGate() {
             const hud = document.getElementById('game-hud');
             const gate = document.getElementById('quest-arrival-gate');
-            if (gate) {
-                if (hud && !hud.classList.contains('hidden')) {
-                    const hudHeight = hud.offsetHeight || 56;
-                    gate.style.top = `${hudHeight}px`;
-                } else {
-                    gate.style.top = '0px';
+            const rulesGate = document.getElementById('quest-safety-rules-gate');
+            const topVal = (hud && !hud.classList.contains('hidden')) ? `${hud.offsetHeight || 56}px` : '0px';
+            
+            if (gate) gate.style.top = topVal;
+            if (rulesGate) rulesGate.style.top = topVal;
+        }
+
+        // ---------------------------------------------------
+        // 小幫手總結安全守則宣導流動 (任務結束後觸發)
+        // ---------------------------------------------------
+        let safetyBriefingCallback = null;
+
+        function showSafetyBriefingAfterQuest(questId, callback) {
+            safetyBriefingCallback = callback;
+            const rulesGate = document.getElementById('quest-safety-rules-gate');
+            if (rulesGate) {
+                const titleEl = document.getElementById('safety-rules-title');
+                if (titleEl) {
+                    const questNames = {
+                        1: "任務一：【迷失的座標】",
+                        2: "任務二：【物資精算師】",
+                        3: "任務三：【血色救援行動】",
+                        4: "任務四：【真相的迷霧】",
+                        5: "任務五：【重啟神盾防線】"
+                    };
+                    titleEl.innerText = `📢 請聽小幫手總結${questNames[questId] || "本關卡"}的安全守則`;
                 }
+                rulesGate.classList.remove('hidden');
+                adjustQuestArrivalGate();
+            } else {
+                if (callback) callback();
+            }
+        }
+
+        // 關閉安全守則宣導頁面，隨後執行後續動作 (如自動跳轉下一關或進入結局)
+        function dismissSafetyRules() {
+            playSound('success');
+            const rulesGate = document.getElementById('quest-safety-rules-gate');
+            if (rulesGate) rulesGate.classList.add('hidden');
+            
+            if (safetyBriefingCallback) {
+                const cb = safetyBriefingCallback;
+                safetyBriefingCallback = null;
+                cb();
             }
         }
 
@@ -3555,8 +3625,10 @@
             playSound('success');
             questStatus[1] = true;
             updateMenuProgress();
-            showToast("準備進入下一區域...", "info");
-            setTimeout(() => { goToQuest(2); }, 500); // 破關後自動接續至任務二
+            showSafetyBriefingAfterQuest(1, () => {
+                showToast("準備進入下一區域...", "info");
+                setTimeout(() => { goToQuest(2); }, 500); // 破關後自動接續至任務二
+            });
         }
 
 
@@ -4085,8 +4157,10 @@
             document.getElementById('unlock-success-modal').style.display = 'none';
             questStatus[2] = true;
             updateMenuProgress();
-            showToast("準備進入下一區域...", "info");
-            setTimeout(() => { goToQuest(3); }, 500); // 自動跳轉至任務三
+            showSafetyBriefingAfterQuest(2, () => {
+                showToast("準備進入下一區域...", "info");
+                setTimeout(() => { goToQuest(3); }, 500); // 自動跳轉至任務三
+            });
         }
 
         function returnToMapFromQuest(questId, modalId) {
@@ -4188,8 +4262,10 @@
             document.getElementById('coordinate-modal').classList.add('hidden');
             questStatus[3] = true;
             updateMenuProgress();
-            showToast("準備進入情報解析區域...", "info");
-            setTimeout(() => { goToQuest(4); }, 500); // 改為自動跳轉至任務四
+            showSafetyBriefingAfterQuest(3, () => {
+                showToast("準備進入情報解析區域...", "info");
+                setTimeout(() => { goToQuest(4); }, 500); // 改為自動跳轉至任務四
+            });
         }
 
         // ==========================================
@@ -4350,8 +4426,10 @@
             document.getElementById('coordinate-modal-4').classList.add('hidden');
             questStatus[4] = true;
             updateMenuProgress();
-            showToast("正在前往主機室...", "info");
-            setTimeout(() => { goToQuest(5); }, 500); // 改為自動跳轉至任務五
+            showSafetyBriefingAfterQuest(4, () => {
+                showToast("正在前往主機室...", "info");
+                setTimeout(() => { goToQuest(5); }, 500); // 改為自動跳轉至任務五
+            });
         }
 
         function openQ4ImageModal(src, caption, showScanner) {
@@ -4704,7 +4782,9 @@
             modal.classList.add('hidden');
             questStatus[5] = true;
             updateMenuProgress();
-            setTimeout(() => { goToEnding(); }, 500); // 完成後直接進入大結局
+            showSafetyBriefingAfterQuest(5, () => {
+                setTimeout(() => { goToEnding(); }, 500); // 完成後直接進入大結局
+            });
         }
 
         function goToEnding(isTimeUp = false) {
@@ -5191,11 +5271,8 @@
                             merged.push(selected);
                             cloudMap.delete(nameKey); // 移除已處理的小隊
                         } else {
-                            // 本機特有小隊（離線登入或剛好沒同步成功的隊伍）：
-                            // 若是當前活躍玩家小隊則必須保留以防影響遊戲，其餘非活躍小隊若雲端已無資料則不保留，隨時同步雲端刪除與清空狀態！
-                            if (teamName && nameKey === teamName.trim().toLowerCase()) {
-                                merged.push(l);
-                            }
+                            // 本機特有小隊（離線登入或剛好沒同步成功的隊伍），百分之百保留！
+                            merged.push(l);
                         }
                     });
 
@@ -5738,7 +5815,7 @@
         }
 
         // ---------------------------------------------------
-        // 全螢幕模式切換與狀態處理
+        // 全螢幕切換與狀態處理邏輯
         // ---------------------------------------------------
         function toggleFullscreen() {
             playSound('click');
@@ -5762,7 +5839,7 @@
             }
         }
 
-        const handleFullscreenChange = () => {
+        function handleFullscreenChange() {
             const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement;
             const icon = document.getElementById('fullscreen-icon');
             const text = document.getElementById('fullscreen-text');
@@ -5783,7 +5860,7 @@
                 }
             }
             if (typeof lucide !== 'undefined') lucide.createIcons();
-        };
+        }
 
         document.addEventListener('fullscreenchange', handleFullscreenChange);
         document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
