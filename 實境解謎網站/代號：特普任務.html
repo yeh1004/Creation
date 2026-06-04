@@ -267,6 +267,51 @@
             animation: shake 0.2s ease-in-out 2;
         }
 
+        /* 警告與說明文字底色+浮動閃爍動畫 */
+        @keyframes alert-float-blink-yellow {
+            0%, 100% {
+                transform: translateY(0);
+                opacity: 1;
+                box-shadow: 0 0 12px rgba(234, 179, 8, 0.4);
+            }
+            50% {
+                transform: translateY(-3px);
+                opacity: 0.85;
+                box-shadow: 0 0 4px rgba(234, 179, 8, 0.1);
+            }
+        }
+        .glowing-alert-box-yellow {
+            background-color: rgba(234, 179, 8, 0.15);
+            border: 1px solid rgba(234, 179, 8, 0.35);
+            color: #fef08a; /* text-yellow-200 */
+            padding: 10px 14px;
+            border-radius: 12px;
+            animation: alert-float-blink-yellow 2s infinite ease-in-out;
+            text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+        }
+
+        @keyframes alert-float-blink-cyan {
+            0%, 100% {
+                transform: translateY(0);
+                opacity: 1;
+                box-shadow: 0 0 12px rgba(34, 211, 238, 0.4);
+            }
+            50% {
+                transform: translateY(-3px);
+                opacity: 0.85;
+                box-shadow: 0 0 4px rgba(34, 211, 238, 0.1);
+            }
+        }
+        .glowing-alert-box-cyan {
+            background-color: rgba(34, 211, 238, 0.15);
+            border: 1px solid rgba(34, 211, 238, 0.35);
+            color: #cffafe; /* text-cyan-100 */
+            padding: 10px 14px;
+            border-radius: 12px;
+            animation: alert-float-blink-cyan 2s infinite ease-in-out;
+            text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+        }
+
     </style>
 </head>
 <body class="text-gray-100 min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-green-500 selection:text-black">
@@ -830,7 +875,10 @@
                         <span id="ending-icon-container" class="inline-block text-gray-600 mb-1">
                             <i data-lucide="lock-keyhole" class="w-6 h-6 mx-auto"></i>
                         </span>
-                        <div class="text-xs text-gray-500 tracking-wider font-mono">FINAL ARCHIVE</div>
+                        <div class="text-xs text-gray-500 tracking-wider font-mono flex items-center justify-center gap-1.5">
+                            <span>FINAL ARCHIVE</span>
+                            <span id="badge-ending" class="text-xs px-1.5 rounded-full bg-red-950 text-red-300 border border-red-900">未解</span>
+                        </div>
                         <div id="ending-title" class="font-bold text-base text-gray-500">最後結局：神盾重啟計畫</div>
                     </div>
                 </button>
@@ -850,7 +898,7 @@
             
             <!-- 📢 安全守則宣導閘門 (quest-safety-rules-gate) -->
             <div id="quest-safety-rules-gate" class="hidden fixed inset-x-0 bottom-0 z-[290] bg-slate-950/98 backdrop-blur-xl flex flex-col justify-center items-center p-6 transition-all duration-300">
-                <div class="text-center max-w-md space-y-6 p-4">
+                <div class="text-center max-w-md w-full space-y-6 p-6 md:p-8 bg-slate-900/90 border border-slate-800 rounded-3xl shadow-2xl shadow-slate-950/50 backdrop-blur-md">
                     <!-- 安全警報圖標與雷達光圈 -->
                     <div class="relative w-20 h-20 mx-auto flex items-center justify-center">
                         <div class="absolute inset-0 rounded-full bg-yellow-500/10 border border-yellow-500/30 animate-ping"></div>
@@ -862,10 +910,9 @@
                     
                     <div class="space-y-1">
                         <h3 id="safety-rules-title" class="text-lg font-black text-yellow-500 tracking-wider">📢 請聽小幫手總結本關卡的安全守則</h3>
-                        <p class="text-[9px] text-slate-500 uppercase tracking-widest font-mono">AEGIS SECURITY BRIEFING GATEWAY</p>
                     </div>
 
-                    <p class="text-xs text-slate-400 leading-relaxed max-w-xs mx-auto">
+                    <p class="text-xs glowing-alert-box-yellow leading-relaxed max-w-xs mx-auto">
                         小幫手正為您講解本關卡之安全防護與避難守則，請仔細聆聽。聆聽完畢後，點選下方按鈕即可。
                     </p>
 
@@ -879,7 +926,7 @@
 
             <!-- 📍 區域抵達安全核實閘門 (quest-arrival-gate) -->
             <div id="quest-arrival-gate" class="hidden fixed inset-x-0 bottom-0 z-[285] bg-slate-950/98 backdrop-blur-xl flex flex-col justify-center items-center p-6 transition-all duration-300">
-                <div class="text-center max-w-md space-y-6 p-4">
+                <div class="text-center max-w-md w-full space-y-6 p-6 md:p-8 bg-slate-900/90 border border-slate-800 rounded-3xl shadow-2xl shadow-slate-950/50 backdrop-blur-md">
                     <!-- 定位圖標與雷達光圈 -->
                     <div class="relative w-20 h-20 mx-auto flex items-center justify-center">
                         <div class="absolute inset-0 rounded-full bg-cyan-500/10 border border-cyan-500/30 animate-ping"></div>
@@ -891,7 +938,6 @@
                     
                     <div class="space-y-1">
                         <h3 class="text-lg font-black text-cyan-400 tracking-wider">📍 區域抵達安全核實</h3>
-                        <p class="text-[9px] text-slate-500 uppercase tracking-widest font-mono">AEGIS SECURE GATEWAY CHECK</p>
                     </div>
 
                     <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl space-y-2 shadow-inner">
@@ -904,7 +950,7 @@
                         <div id="gate-quest-location" class="text-base font-black text-yellow-400 glow-text-yellow">🏠 川堂 / 備用物資庫</div>
                     </div>
 
-                    <p class="text-xs text-slate-400 leading-relaxed max-w-xs mx-auto">
+                    <p class="text-xs glowing-alert-box-cyan leading-relaxed max-w-xs mx-auto">
                         為了保障挑戰數據的真實性，請確保您的小組成員已<b>全員實體抵達</b>上述地點後，再點選下方按鈕解鎖任務內容。
                     </p>
 
@@ -947,7 +993,6 @@
                         <span class="inline-block w-2 h-2 rounded-full bg-cyan-400 animate-ping shrink-0"></span>
                         <span id="q1-status-text" class="text-cyan-300 font-bold truncate">請點擊下方「接收任務指令」解鎖通訊...</span>
                     </div>
-                    <div class="text-xs text-slate-400 font-mono hidden md:block ml-2 shrink-0">網格比例: 1 = 52px</div>
                 </div>
 
                 <!-- 網格地圖視窗 (含響應式捲動) -->
@@ -960,7 +1005,6 @@
                                     <h2 id="q1-ui-title" class="text-lg md:text-xl font-black flex items-center gap-2">
                                         <span class="animate-pulse text-cyan-400">📡</span> 戰術平板連線中...
                                     </h2>
-                                    <div class="text-xs text-slate-400 font-mono">A.E.G.I.S. OS v2.4 (OFFLINE)</div>
                                 </div>
                                 <div class="p-4 md:p-6 flex-1 overflow-y-auto bg-slate-50 text-slate-800" id="q1-ui-content">
                                 </div>
@@ -1317,7 +1361,7 @@
                 <div id="fog-stage-1" class="bg-gray-950 p-6 rounded-xl border border-purple-900/40 space-y-4">
                     <h4 class="font-bold text-purple-400 text-sm md:text-base">階段 1：實習工廠火警情報 (3位數密碼鎖)</h4>
                     <p class="text-xs text-gray-400 leading-relaxed">
-                        大地震引發「機電實習工廠」起火！平板收到 6 張情報卡，必須淘汰 3 張假情報。
+                        大地震引發「機電實習工廠」起火！平板收到 6 張情報卡，必須淘汰 3 張假情報，請將正確的3張情報卡數字由小到大排序
                     </p>
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs">
                         <div onclick="q4_clickCard(this, true, 9)" class="q4-info-card bg-gray-900 border border-gray-700 p-4 rounded-xl relative pr-8 shadow-sm hover:border-purple-500/50 hover:bg-gray-850 cursor-pointer transition-all duration-300 transform hover:-translate-y-0.5 select-none">
@@ -1917,7 +1961,7 @@
                                 <th class="py-3 px-2 text-center">排名</th>
                                 <th class="py-3 px-3">隊伍名稱</th>
                                 <th class="py-3 px-3 text-center">通關狀態</th>
-                                <th class="py-3 px-3 text-center">闖關時間</th>
+                                <th class="py-3 px-3 text-center">通關時間</th>
                                 <th class="py-3 px-3 text-center">失敗次數</th>
                             </tr>
                         </thead>
@@ -1978,7 +2022,7 @@
                     <h3 class="text-lg font-bold text-amber-500 tracking-wider">緊急逃生裝備挑戰</h3>
                     
                     <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl text-left leading-relaxed text-sm text-slate-300 font-medium">
-                        🎒 你的背包裡已放了身分證明、瑞士刀、保暖毯、包紮用品，剩下<span class="text-yellow-400 font-extrabold bg-yellow-400/10 px-1 py-0.5 rounded">30秒</span>逃生，你只能再拿三個物品，會拿哪些<span class="text-yellow-400 font-extrabold bg-yellow-400/10 px-1 py-0.5 rounded">「最佳物資」</span>？請依數字大小<span class="text-yellow-400 font-extrabold bg-yellow-400/10 px-1 py-0.5 rounded">由小排到大</span>。
+                        🎒 你的背包裡已放了身份證明、瑞士刀、保暖毯、包紮用品，剩下<span class="text-yellow-400 font-extrabold bg-yellow-400/10 px-1 py-0.5 rounded">30秒</span>逃生，你只能再拿三個物品，會拿哪些<span class="text-yellow-400 font-extrabold bg-yellow-400/10 px-1 py-0.5 rounded">「最佳物資」</span>？請依數字大小<span class="text-yellow-400 font-extrabold bg-yellow-400/10 px-1 py-0.5 rounded">由小排到大</span>。
                     </div>
                     
                     <p class="text-[10px] text-slate-500 uppercase tracking-widest font-mono">⚠️ 點選下方按鈕後，30秒倒數將立即啟動</p>
@@ -2004,7 +2048,7 @@
                 <div class="bg-[#161b22] border border-slate-800 p-3.5 rounded-2xl text-left overflow-hidden space-y-3">
                     <!-- ❓ 題目常駐顯示 -->
                     <div class="text-xs text-slate-300 font-bold leading-relaxed border-b border-slate-800 pb-2">
-                        🎒 你的背包裡已放了身分證明、瑞士刀、保暖毯、包紮用品，剩下<span class="text-yellow-400 font-extrabold bg-yellow-400/10 px-1 py-0.5 rounded">30秒</span>逃生，你只能再拿三個物品，會拿哪些<span class="text-yellow-400 font-extrabold bg-yellow-400/10 px-1 py-0.5 rounded">「最佳物資」</span>？請依數字大小<span class="text-yellow-400 font-extrabold bg-yellow-400/10 px-1 py-0.5 rounded">由小排到大</span>。
+                        🎒 你的背包裡已放了身份證明、瑞士刀、保暖毯、包紮用品，剩下<span class="text-yellow-400 font-extrabold bg-yellow-400/10 px-1 py-0.5 rounded">30秒</span>逃生，你只能再拿三個物品，會拿哪些<span class="text-yellow-400 font-extrabold bg-yellow-400/10 px-1 py-0.5 rounded">「最佳物資」</span>？請依數字大小<span class="text-yellow-400 font-extrabold bg-yellow-400/10 px-1 py-0.5 rounded">由小排到大</span>。
                     </div>
                     
                     <p class="text-[10px] text-slate-400 text-center tracking-wide font-medium">請選擇 3 個最佳裝備物品代碼（依序填入 3 位密碼）</p>
@@ -3013,6 +3057,7 @@
             const endingIcon = document.getElementById('ending-icon-container');
             const endingTitle = document.getElementById('ending-title');
             const endingGlow = document.getElementById('ending-glow');
+            const badgeEnding = document.getElementById('badge-ending');
 
             if (completedCount === 5) {
                 endingBtn.style.opacity = "1";
@@ -3021,6 +3066,10 @@
                 endingIcon.innerHTML = `<i data-lucide="lock-keyhole-open" class="w-6 h-6 mx-auto text-green-400 animate-pulse"></i>`;
                 endingTitle.className = "font-bold text-base text-green-300 glow-text";
                 endingGlow.className = "absolute inset-0 bg-green-500/10 opacity-100";
+                if (badgeEnding) {
+                    badgeEnding.innerText = "已解鎖";
+                    badgeEnding.className = "text-xs px-1.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800";
+                }
             } else {
                 endingBtn.style.opacity = "0.4";
                 endingBtn.style.cursor = "not-allowed";
@@ -3028,6 +3077,10 @@
                 endingIcon.innerHTML = `<i data-lucide="lock-keyhole" class="w-6 h-6 mx-auto text-gray-600"></i>`;
                 endingTitle.className = "font-bold text-base text-gray-500";
                 endingGlow.className = "absolute inset-0 bg-yellow-500/5 opacity-0";
+                if (badgeEnding) {
+                    badgeEnding.innerText = "未解";
+                    badgeEnding.className = "text-xs px-1.5 rounded-full bg-red-950 text-red-300 border border-red-900";
+                }
             }
             if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
@@ -4788,6 +4841,19 @@
         }
 
         function goToEnding(isTimeUp = false) {
+            // 如果不是時間到，且尚未破完全部關卡，則不准進入大結局
+            if (!isTimeUp) {
+                let completedCount = 0;
+                for (let q in questStatus) {
+                    if (questStatus[q]) completedCount++;
+                }
+                if (completedCount < 5) {
+                    showToast("您尚未重建所有神盾安全任務，無法重啟終極防衛系統！", "fail");
+                    playSound('fail');
+                    return;
+                }
+            }
+            
             clearInterval(timerInterval); // 暫停計時器
             
             const endIcon = document.getElementById('end-status-icon');
@@ -4838,6 +4904,8 @@
                 document.getElementById('end-honor-banner').classList.remove('hidden');
                 
                 playSound('success');
+                // 啟動煙火特效
+                startFireworks();
             }
 
             document.getElementById('end-team-name').innerText = teamName;
@@ -4846,6 +4914,8 @@
             
             // 立即同步進度到 localStorage，將 playCount 累加並保存首次通關時間
             saveCurrentTeamProgress();
+            // 強制立即同步進度到雲端
+            syncProgressToCloud(true);
             
             if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
@@ -4855,6 +4925,7 @@
 
         function restartGame() {
             playSound('click');
+            stopFireworks(); // 停止煙火
             clearInterval(timerInterval); // 重置計時
             totalSeconds = 100 * 60;
             document.getElementById('game-hud').classList.add('hidden');
@@ -5260,19 +5331,14 @@
                             const lScore = lDone + (l.gameCleared ? 10 : 0) + (l.playCount || 0) * 100;
                             const cScore = cDone + (c.gameCleared ? 10 : 0) + (c.playCount || 0) * 100;
                             
-                            let selected;
-                            if (teamName && nameKey === teamName.trim().toLowerCase()) {
-                                // 當前平板活躍小隊：保護玩家不受舊雲端覆蓋，取分數最高者，平手則保留本機最新進度與秒數
-                                selected = lScore >= cScore ? l : c;
-                            } else {
-                                // 其他平板小隊：取進度更完整/更新的資料
-                                selected = lScore >= cScore ? l : c;
-                            }
+                            let selected = lScore >= cScore ? l : c;
                             merged.push(selected);
                             cloudMap.delete(nameKey); // 移除已處理的小隊
                         } else {
-                            // 本機特有小隊（離線登入或剛好沒同步成功的隊伍），百分之百保留！
-                            merged.push(l);
+                            // 本機特有小隊：若為目前平板活躍小隊，則保留離線狀態；若為其他小隊，因雲端已被刪除，故予以同步刪除，防止重複貼回
+                            if (teamName && nameKey === teamName.trim().toLowerCase()) {
+                                merged.push(l);
+                            }
                         }
                     });
 
@@ -5382,22 +5448,24 @@
                         
                         let questStatusChanged = false;
                         for (let q = 1; q <= 5; q++) {
-                            if (cloudTeam.questStatus[q] !== questStatus[q]) {
-                                questStatus[q] = cloudTeam.questStatus[q];
+                            // 僅允許雲端進度向前同步至本機，絕不允許將本機已破解 (true) 的關卡覆蓋為未解 (false)
+                            // 避免因網路延遲、快取或競態條件導致本機進度回退
+                            if (cloudTeam.questStatus[q] && !questStatus[q]) {
+                                questStatus[q] = true;
                                 questStatusChanged = true;
                             }
                         }
                         
-                        if (cloudTeam.failureCount !== failureCount) {
+                        // 僅允許失敗次數增加，防止被雲端舊數據覆蓋
+                        if (cloudTeam.failureCount > failureCount) {
                             failureCount = cloudTeam.failureCount;
                             updateFailureDisplay();
                         }
                         
-                        if (cloudTeam.gameCleared !== gameCleared) {
-                            gameCleared = cloudTeam.gameCleared;
-                            if (gameCleared) {
-                                goToEnding(false);
-                            }
+                        // 僅允許已破關狀態從 false 變為 true
+                        if (cloudTeam.gameCleared && !gameCleared) {
+                            gameCleared = true;
+                            goToEnding(false);
                         }
                         
                         // 避免本機倒計時被雲端未同步的 elapsedSeconds 覆蓋而發生時間跳動，本機計時器應為單一可信來源
@@ -5408,9 +5476,30 @@
                         //     updateTimerDisplay();
                         // }
                         
+                        // 更新本機 localStorage 中該隊伍的紀錄，確保不被舊雲端數據降級
                         if (existingIdx > -1) {
-                            localTeams[existingIdx] = cloudTeam;
+                            let localTeam = localTeams[existingIdx];
+                            // 合併雲端與本機，只保留較先進的狀態
+                            for (let q = 1; q <= 5; q++) {
+                                localTeam.questStatus[q] = localTeam.questStatus[q] || cloudTeam.questStatus[q];
+                            }
+                            localTeam.failureCount = Math.max(localTeam.failureCount || 0, cloudTeam.failureCount || 0);
+                            localTeam.gameCleared = localTeam.gameCleared || cloudTeam.gameCleared;
+                            localTeam.playCount = Math.max(localTeam.playCount || 0, cloudTeam.playCount || 0);
+                            
+                            // 對於時間，本機計時器為單一可信來源，如果本機已經破關，endTime/elapsedSeconds 應保留本機
+                            if (!localTeam.gameCleared && cloudTeam.gameCleared) {
+                                localTeam.endTime = cloudTeam.endTime;
+                                localTeam.elapsedSeconds = cloudTeam.elapsedSeconds;
+                            }
+                            if (cloudTeam.firstElapsedSeconds !== null && (localTeam.firstElapsedSeconds === null || localTeam.firstElapsedSeconds === undefined)) {
+                                localTeam.firstElapsedSeconds = cloudTeam.firstElapsedSeconds;
+                                localTeam.firstFailureCount = cloudTeam.firstFailureCount;
+                                localTeam.firstTitle = cloudTeam.firstTitle;
+                            }
+                            localTeam.title = localTeam.title || cloudTeam.title;
                         } else {
+                            // 本機沒有該隊伍，則直接寫入
                             localTeams.push(cloudTeam);
                         }
                         localStorage.setItem('trump_mission_teams', JSON.stringify(localTeams));
@@ -5549,32 +5638,37 @@
                 const aCleared = a.gameCleared || (a.playCount > 0);
                 const bCleared = b.gameCleared || (b.playCount > 0);
                 
+                // 1. 已全部破關的隊伍排名一定會比尚未破關的隊伍排名前面
                 if (aCleared !== bCleared) {
                     return aCleared ? -1 : 1;
                 }
                 
                 if (aCleared) {
-                    // 已通關隊伍優先按首次通關時間與失敗次數排序
+                    // 2. 已全部破關的隊伍排序依據：通關時間 (秒) + 失敗次數 * 60 秒
                     const aTime = a.firstElapsedSeconds !== null ? a.firstElapsedSeconds : a.elapsedSeconds;
-                    const bTime = b.firstElapsedSeconds !== null ? b.firstElapsedSeconds : b.elapsedSeconds;
-                    if (aTime !== bTime) {
-                        return aTime - bTime;
-                    }
                     const aFails = a.firstFailureCount !== null ? a.firstFailureCount : a.failureCount;
+                    const aEffective = aTime + aFails * 60;
+                    
+                    const bTime = b.firstElapsedSeconds !== null ? b.firstElapsedSeconds : b.elapsedSeconds;
                     const bFails = b.firstFailureCount !== null ? b.firstFailureCount : b.failureCount;
-                    if (aFails !== bFails) {
-                        return aFails - bFails;
+                    const bEffective = bTime + bFails * 60;
+                    
+                    if (aEffective !== bEffective) {
+                        return aEffective - bEffective;
                     }
                     return a.startTime - b.startTime;
                 } else {
-                    // 進行中隊伍按破關數、消耗時間排序
+                    // 3. 尚未破關的隊伍排序依據：已過關數量越多越前面；若數量相同，依累計有效時間（目前時間 + 失敗次數 * 60 秒）由少至多排序
                     const aDone = Object.values(a.questStatus || {}).filter(Boolean).length;
                     const bDone = Object.values(b.questStatus || {}).filter(Boolean).length;
                     if (aDone !== bDone) {
                         return bDone - aDone;
                     }
-                    if (a.elapsedSeconds !== b.elapsedSeconds) {
-                        return a.elapsedSeconds - b.elapsedSeconds;
+                    
+                    const aEffective = a.elapsedSeconds + a.failureCount * 60;
+                    const bEffective = b.elapsedSeconds + b.failureCount * 60;
+                    if (aEffective !== bEffective) {
+                        return aEffective - bEffective;
                     }
                     return a.startTime - b.startTime;
                 }
@@ -5590,10 +5684,9 @@
             return m + "分" + (s < 10 ? "0" + s : s) + "秒";
         }
 
-        function openRankingModal() {
-            playSound('click');
-            const modal = document.getElementById('ranking-modal');
+        function renderRankingRows() {
             const tbody = document.getElementById('ranking-table-body');
+            if (!tbody) return;
             tbody.innerHTML = "";
             
             const sortedTeams = getSortedRankings();
@@ -5620,18 +5713,21 @@
                         ? `<div class="text-[10px] text-yellow-500/80 font-bold mt-0.5">🎖️ ${team.firstTitle}</div>` 
                         : (team.title ? `<div class="text-[10px] text-yellow-500/80 font-bold mt-0.5">🎖️ ${team.title}</div>` : "");
                     
-                    let firstClearStr = "-";
-                    if (team.playCount > 0 && team.firstElapsedSeconds !== null) {
-                        firstClearStr = `<span class="font-mono text-green-400 font-bold">${formatDuration(team.firstElapsedSeconds)}</span>
-                                         <span class="text-[10px] text-red-400 ml-1.5">(失敗: ${team.firstFailureCount || 0}次)</span>`;
-                    }
-                    
-                    const playCountBadge = `<span class="px-2 py-0.5 rounded-full bg-blue-950 text-blue-300 border border-blue-800 text-[10px] font-bold">${team.playCount || 0} 次</span>`;
-                    
+                    const isCleared = team.gameCleared || (team.playCount > 0);
                     const questDoneCount = Object.values(team.questStatus || {}).filter(Boolean).length;
-                    const statusBadge = team.gameCleared 
+                    const statusBadge = isCleared 
                         ? `<span class="px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] font-black">🎉 已通關</span>`
                         : `<span class="px-2 py-0.5 rounded-full bg-blue-950 text-blue-400 border border-blue-800 text-[10px] font-bold">🏃 進行中 (${questDoneCount}/5)</span>`;
+                    
+                    const timeVal = isCleared 
+                        ? (team.firstElapsedSeconds !== null ? team.firstElapsedSeconds : team.elapsedSeconds)
+                        : team.elapsedSeconds;
+                    const timeStr = `<span class="font-mono text-green-400 font-bold">${formatDuration(timeVal)}</span>`;
+
+                    const failVal = isCleared
+                        ? (team.firstFailureCount !== null ? team.firstFailureCount : team.failureCount)
+                        : team.failureCount;
+                    const failureStr = `<span class="font-mono text-red-400 font-bold">${failVal} 次</span>`;
                     
                     tbody.innerHTML += `
                         <tr class="border-b border-slate-800/60 hover:bg-slate-900/40 transition-colors ${isCurrent}">
@@ -5640,17 +5736,47 @@
                                 <span class="font-bold text-white">${team.name}</span>
                                 ${titleText}
                             </td>
-                            <td class="py-3.5 px-3 text-center">${firstClearStr}</td>
-                            <td class="py-3.5 px-3 text-center">${playCountBadge}</td>
                             <td class="py-3.5 px-3 text-center">${statusBadge}</td>
+                            <td class="py-3.5 px-3 text-center">${timeStr}</td>
+                            <td class="py-3.5 px-3 text-center">${failureStr}</td>
                         </tr>
                     `;
                 });
             }
-            
-            modal.style.display = 'flex';
             if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
+            }
+        }
+
+        async function openRankingModal() {
+            playSound('click');
+            const modal = document.getElementById('ranking-modal');
+            modal.style.display = 'flex';
+            
+            // 1. 立即以當前快取數據渲染，確保瞬間開啟
+            renderRankingRows();
+            
+            // 2. 顯示連線更新提示，同時背景即時抓取雲端最新排行數據
+            const tbody = document.getElementById('ranking-table-body');
+            const statusRow = document.createElement('tr');
+            statusRow.id = 'ranking-sync-loader';
+            statusRow.innerHTML = `
+                <td colspan="5" class="py-3 text-center text-yellow-400 bg-yellow-950/20 border-b border-yellow-950/30 text-[10px] font-mono font-bold animate-pulse">
+                    📡 正在同步雲端最新排行數據...
+                </td>
+            `;
+            tbody.insertBefore(statusRow, tbody.firstChild);
+            
+            try {
+                // 強制背景同步雲端，完成後再次重新渲染
+                await syncProgressFromCloud();
+            } catch (e) {
+                console.error("Leaderboard background sync failed:", e);
+            } finally {
+                // 移除連線提示並重新渲染最新數據
+                const loader = document.getElementById('ranking-sync-loader');
+                if (loader) loader.remove();
+                renderRankingRows();
             }
         }
 
@@ -5659,8 +5785,179 @@
             document.getElementById('ranking-modal').style.display = 'none';
         }
 
+        // ---------------------------------------------------
+        // 🎇 煙火特效控制程式碼 (神盾系統啟動成功結局畫面)
+        // ---------------------------------------------------
+        let fireworksActive = false;
+        let fireworksCanvas = null;
+        let fireworksAnimationId = null;
+        let fireworksParticles = [];
+        let fireworksRockets = [];
+
+        function startFireworks() {
+            if (!gameCleared) return; // 僅限過關結局才放煙火
+            
+            fireworksActive = true;
+            if (!fireworksCanvas) {
+                fireworksCanvas = document.createElement('canvas');
+                fireworksCanvas.id = 'fireworks-canvas';
+                fireworksCanvas.className = 'fixed inset-0 pointer-events-none z-[120]';
+                document.body.appendChild(fireworksCanvas);
+            }
+            
+            fireworksCanvas.style.display = 'block';
+            resizeFireworksCanvas();
+            window.addEventListener('resize', resizeFireworksCanvas);
+            
+            fireworksParticles = [];
+            fireworksRockets = [];
+            animateFireworks();
+        }
+
+        function stopFireworks() {
+            fireworksActive = false;
+            if (fireworksAnimationId) {
+                cancelAnimationFrame(fireworksAnimationId);
+                fireworksAnimationId = null;
+            }
+            if (fireworksCanvas) {
+                fireworksCanvas.style.display = 'none';
+            }
+            window.removeEventListener('resize', resizeFireworksCanvas);
+        }
+
+        function resizeFireworksCanvas() {
+            if (fireworksCanvas) {
+                fireworksCanvas.width = window.innerWidth;
+                fireworksCanvas.height = window.innerHeight;
+            }
+        }
+
+        class FireworkParticle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.angle = Math.random() * Math.PI * 2;
+                this.speed = Math.random() * 4 + 2;
+                this.friction = 0.95;
+                this.gravity = 0.08;
+                this.vx = Math.cos(this.angle) * this.speed;
+                this.vy = Math.sin(this.angle) * this.speed;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.015 + 0.01;
+                this.size = Math.random() * 2 + 1.5;
+            }
+
+            update() {
+                this.vx *= this.friction;
+                this.vy *= this.friction;
+                this.vy += this.gravity;
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= this.decay;
+            }
+
+            draw(ctx) {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 6;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        class FireworkRocket {
+            constructor(startX, startY, targetX, targetY, color) {
+                this.x = startX;
+                this.y = startY;
+                this.targetX = targetX;
+                this.targetY = targetY;
+                this.color = color;
+                this.speed = 8;
+                this.angle = Math.atan2(targetY - startY, targetX - startX);
+                this.vx = Math.cos(this.angle) * this.speed;
+                this.vy = Math.sin(this.angle) * this.speed;
+                this.distanceToTarget = Math.hypot(targetX - startX, targetY - startY);
+                this.distanceTraveled = 0;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.distanceTraveled = Math.hypot(this.x - this.targetX, this.y - this.targetY);
+                return this.distanceTraveled < 10; // 抵達爆炸點
+            }
+
+            draw(ctx) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function animateFireworks() {
+            if (!fireworksActive) return;
+            fireworksAnimationId = requestAnimationFrame(animateFireworks);
+            
+            const ctx = fireworksCanvas.getContext('2d');
+            ctx.clearRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+            
+            // 隨機在左右兩側發射煙火
+            if (Math.random() < 0.05) {
+                const isLeft = Math.random() < 0.5;
+                const startX = isLeft 
+                    ? Math.random() * (fireworksCanvas.width * 0.25) + fireworksCanvas.width * 0.05
+                    : Math.random() * (fireworksCanvas.width * 0.25) + fireworksCanvas.width * 0.7;
+                
+                const startY = fireworksCanvas.height;
+                const targetX = startX + (Math.random() * 100 - 50);
+                const targetY = Math.random() * (fireworksCanvas.height * 0.4) + fireworksCanvas.height * 0.15;
+                
+                const colors = ['#f59e0b', '#10b981', '#3b82f6', '#ec4899', '#8b5cf6', '#ef4444', '#06b6d4'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                fireworksRockets.push(new FireworkRocket(startX, startY, targetX, targetY, color));
+            }
+            
+            // 更新並繪製火箭
+            for (let i = fireworksRockets.length - 1; i >= 0; i--) {
+                const rocket = fireworksRockets[i];
+                rocket.draw(ctx);
+                const arrived = rocket.update();
+                if (arrived) {
+                    // 產生粒子爆炸效果
+                    for (let p = 0; p < 50; p++) {
+                        fireworksParticles.push(new FireworkParticle(rocket.targetX, rocket.targetY, rocket.color));
+                    }
+                    fireworksRockets.splice(i, 1);
+                }
+            }
+            
+            // 更新並繪製粒子
+            for (let i = fireworksParticles.length - 1; i >= 0; i--) {
+                const p = fireworksParticles[i];
+                p.update();
+                if (p.alpha <= 0) {
+                    fireworksParticles.splice(i, 1);
+                } else {
+                    p.draw(ctx);
+                }
+            }
+        }
+
         function goToMenuFromEnding() {
             playSound('click');
+            stopFireworks(); // 停止煙火
             switchScreen('screen-game-menu');
             updateMenuProgress();
         }
