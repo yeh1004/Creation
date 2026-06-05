@@ -1652,7 +1652,7 @@
                                 <h2 class="text-xl font-black text-slate-800 mb-2 flex items-center gap-2">
                                     <span>🧩</span> 組合安全原則
                                 </h2>
-                                <p class="text-xs text-slate-500 font-bold mb-4">請點擊 6 個單字組出 3 個片語形成校園安全應變口號。</p>
+                                <p class="text-xs text-slate-500 font-bold mb-4">請點擊 6 個單字組出 3 個片語形成校園安全應變口號。如：sit down、stand up、be quiet。</p>
                                 <div id="q5-sentence-container" class="min-h-[100px] bg-slate-50 rounded-xl border-2 border-dashed border-slate-300 p-4 flex flex-wrap gap-2 items-center justify-center mb-6">
                                     <!-- 由 JS 動態生成 -->
                                 </div>
@@ -3680,7 +3680,7 @@
             updateMenuProgress();
             showSafetyBriefingAfterQuest(1, () => {
                 showToast("準備進入下一區域...", "info");
-                setTimeout(() => { goToQuest(2); }, 500); // 破關後自動接續至任務二
+                goToQuest(2); // 破關後自動接續至任務二
             });
         }
 
@@ -4212,7 +4212,7 @@
             updateMenuProgress();
             showSafetyBriefingAfterQuest(2, () => {
                 showToast("準備進入下一區域...", "info");
-                setTimeout(() => { goToQuest(3); }, 500); // 自動跳轉至任務三
+                goToQuest(3); // 自動跳轉至任務三
             });
         }
 
@@ -4317,7 +4317,7 @@
             updateMenuProgress();
             showSafetyBriefingAfterQuest(3, () => {
                 showToast("準備進入情報解析區域...", "info");
-                setTimeout(() => { goToQuest(4); }, 500); // 改為自動跳轉至任務四
+                goToQuest(4); // 改為自動跳轉至任務四
             });
         }
 
@@ -4481,7 +4481,7 @@
             updateMenuProgress();
             showSafetyBriefingAfterQuest(4, () => {
                 showToast("正在前往主機室...", "info");
-                setTimeout(() => { goToQuest(5); }, 500); // 改為自動跳轉至任務五
+                goToQuest(5); // 改為自動跳轉至任務五
             });
         }
 
@@ -4836,7 +4836,7 @@
             questStatus[5] = true;
             updateMenuProgress();
             showSafetyBriefingAfterQuest(5, () => {
-                setTimeout(() => { goToEnding(); }, 500); // 完成後直接進入大結局
+                goToEnding(); // 完成後直接進入大結局
             });
         }
 
